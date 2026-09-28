@@ -1,0 +1,451 @@
+# ============================================================
+# AI FILM STUDIO - GITIGNORE
+# ============================================================
+
+# ------------------------------------------------------------
+# Operating System Files
+# ------------------------------------------------------------
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ------------------------------------------------------------
+# Editors / IDEs
+# ------------------------------------------------------------
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Conda
+.conda/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ------------------------------------------------------------
+# Node / JavaScript
+# ------------------------------------------------------------
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+.npm/
+.parcel-cache/
+.next/
+.nuxt/
+dist/
+build/
+
+# ------------------------------------------------------------
+# Temporary Files
+# ------------------------------------------------------------
+
+tmp/
+temp/
+temporary/
+scratch/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.cache
+
+# ------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------
+
+logs/
+*.log
+
+# ------------------------------------------------------------
+# Render / Preview / Cache
+# ------------------------------------------------------------
+
+cache/
+caches/
+render-cache/
+preview/
+previews/
+proxies/
+proxy/
+thumbnails/
+waveforms/
+conformed/
+optimized-media/
+
+# ------------------------------------------------------------
+# Adobe / Video Editing Temporary Data
+# ------------------------------------------------------------
+
+Adobe Premiere Pro Auto-Save/
+Premiere Pro Auto-Save/
+After Effects Auto-Save/
+Media Cache/
+Media Cache Files/
+Common/
+Peak Files/
+Adobe Premiere Pro Preview Files/
+
+# ------------------------------------------------------------
+# VFX / 3D Temporary Data
+# ------------------------------------------------------------
+
+blender/
+*.blend1
+*.blend2
+maya/
+houdini/
+nuke/
+fusion/
+comfyui_temp/
+ComfyUI/temp/
+ComfyUI/output/
+
+# ------------------------------------------------------------
+# AI Generation Temporary / High-Volume Outputs
+# ------------------------------------------------------------
+
+ai-temp/
+ai-cache/
+generation-cache/
+generation-temp/
+generated-preview/
+generated-temp/
+batch-temp/
+
+# Keep production metadata but ignore disposable generation
+# directories when they are used for raw experimental output.
+
+# ------------------------------------------------------------
+# Large Render / Simulation Files
+# ------------------------------------------------------------
+
+renders/
+render/
+render_output/
+sim_cache/
+simulation_cache/
+particle_cache/
+fluid_cache/
+physics_cache/
+
+# ------------------------------------------------------------
+# Video / Image Sequence Temporary Files
+# ------------------------------------------------------------
+
+*.mxf
+*.braw
+*.r3d
+*.ari
+*.dng
+*.cr2
+*.cr3
+*.nef
+*.arw
+
+# Large image sequences
+*.exr
+*.dpx
+*.tif
+*.tiff
+
+# ------------------------------------------------------------
+# Large Audio / Video Media
+# ------------------------------------------------------------
+#
+# IMPORTANT:
+# These rules prevent accidental commitment of large media
+# to the Git repository.
+#
+# Store active media in the media/storage system instead.
+#
+
+*.mp4
+*.mov
+*.mxf
+*.avi
+*.mkv
+*.webm
+
+*.wav
+*.aiff
+*.aif
+*.flac
+*.ogg
+
+*.mp3
+*.m4a
+
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.psd
+*.psb
+
+# ------------------------------------------------------------
+# Delivery / Export Temporary Files
+# ------------------------------------------------------------
+
+exports/
+export/
+delivery-temp/
+delivery-working/
+upload-temp/
+upload-working/
+
+# ------------------------------------------------------------
+# Archives / Compressed Temporary Files
+# ------------------------------------------------------------
+
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+*.bz2
+
+# ------------------------------------------------------------
+# Local Machine Configuration
+# ------------------------------------------------------------
+
+local/
+machine/
+machine-local/
+.local/
+.local-config/
+config.local/
+settings.local/
+
+*.local
+*.local.json
+*.local.yaml
+*.local.yml
+*.local.toml
+
+# ------------------------------------------------------------
+# Secrets / Credentials
+# ------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+credentials/
+secrets/
+private/
+tokens/
+
+# ------------------------------------------------------------
+# API / Authentication Files
+# ------------------------------------------------------------
+
+api_keys/
+api-key/
+auth/
+authentication/
+session/
+sessions/
+
+# ------------------------------------------------------------
+# Databases Created Locally
+# ------------------------------------------------------------
+
+*.db
+*.sqlite
+*.sqlite3
+
+# ------------------------------------------------------------
+# Local Tool Data
+# ------------------------------------------------------------
+
+.zotero/
+.zotero-connectors/
+.claude-local/
+.local-ai/
+model-cache/
+huggingface-cache/
+
+# ------------------------------------------------------------
+# ComfyUI
+# ------------------------------------------------------------
+
+ComfyUI/output/
+ComfyUI/input/
+ComfyUI/temp/
+ComfyUI/cache/
+
+# ------------------------------------------------------------
+# Model Files
+# ------------------------------------------------------------
+#
+# Large AI model files generally belong in dedicated model
+# storage rather than Git.
+#
+
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.bin
+*.gguf
+*.ggml
+
+# ------------------------------------------------------------
+# CUDA / GPU / System Cache
+# ------------------------------------------------------------
+
+.nv/
+.cuda/
+torch_cache/
+triton_cache/
+
+# ------------------------------------------------------------
+# HPC / Cluster Temporary Files
+# ------------------------------------------------------------
+
+slurm-*.out
+slurm-*.err
+*.o
+*.e
+
+# ------------------------------------------------------------
+# Backup Working Copies
+# ------------------------------------------------------------
+
+*.backup
+*.old
+*.orig
+
+# NOTE:
+# The studio/99_backup/ directory itself should not necessarily
+# be ignored. Important human-selected backup records may need
+# to remain version controlled.
+#
+# Ignore only disposable backup artifacts:
+
+backup-temp/
+backup-working/
+
+# ------------------------------------------------------------
+# Project-Specific Temporary Folders
+# ------------------------------------------------------------
+
+**/00_admin/temp/
+**/00_admin/cache/
+**/01_research/temp/
+**/02_story/temp/
+**/03_script/temp/
+**/04_director/temp/
+**/05_production-design/temp/
+**/06_casting/temp/
+**/07_storyboard-previs/temp/
+**/08_cinematography/temp/
+**/09_ai-generation/temp/
+**/10_animation/temp/
+**/11_production/temp/
+**/12_edit/temp/
+**/13_vfx-motion/temp/
+**/14_sound/temp/
+**/15_music/temp/
+**/16_color/temp/
+**/17_continuity/temp/
+**/18_technical/temp/
+**/19_legal-rights/temp/
+**/20_qc/temp/
+**/21_distribution/temp/
+**/22_marketing/temp/
+**/23_knowledge/temp/
+**/24_archive/temp/
+
+# ------------------------------------------------------------
+# Generated Reports That Are Purely Temporary
+# ------------------------------------------------------------
+
+report-temp/
+reports-temp/
+*.report.tmp
+
+# ------------------------------------------------------------
+# OS / Installer / Miscellaneous
+# ------------------------------------------------------------
+
+*.msi
+*.exe
+*.dmg
+*.pkg
+*.iso
+
+# ------------------------------------------------------------
+# Keep Important Studio Files
+# ------------------------------------------------------------
+
+# Markdown
+!*.md
+
+# GitHub workflows
+!.github/
+!.github/workflows/
+
+# Example environment/configuration files
+!.env.example
+
+# Studio knowledge directories should remain trackable
+!studio/
+!studio/**/
+
+# Project documentation should remain trackable
+!**/*.md
+
+# Explicitly keep project metadata files
+!**/*.json
+!**/*.yaml
+!**/*.yml
+
+# ------------------------------------------------------------
+# END
+# ------------------------------------------------------------
