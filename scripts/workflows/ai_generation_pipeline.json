@@ -1,0 +1,103 @@
+{
+  "id": "WF_AI_GENERATION_PIPELINE",
+  "name": "AI Generation Pipeline",
+  "version": "v001",
+  "description": "Controlled AI image/video generation workflow with preflight validation, generation, registration, and QC handoff.",
+  "risk_level": "MEDIUM",
+  "approval_required": true,
+  "variables": {
+    "SHOT_ID": "{{SHOT_ID}}",
+    "PROMPT_ID": "{{PROMPT_ID}}",
+    "MODEL_ID": "{{MODEL_ID}}",
+    "OUTPUT_PATH": "{{PROJECT_ROOT}}/09_ai-generation/selected/{{SHOT_ID}}_v001"
+  },
+  "steps": [
+    {
+      "name": "preflight_audit",
+      "type": "command",
+      "args": [
+        "python",
+        "{{REPO_ROOT}}/scripts/create_project.py",
+        "audit",
+        "{{PROJECT_ID}}",
+        "{{PROJECT_SLUG}}"
+      ]
+    },
+    {
+      "name": "validate_generation_inputs",
+      "type": "command",
+      "args": [
+        "python",
+        "-c",
+        "import os,sys; required=['SHOT_ID','PROMPT_ID','MODEL_ID']; missing=[x for x in required if not os.environ.get(x)]; print('Missing environment variables:', ', '.join(missing)) if missing else print('AI generation inputs ready'); sys.exit(1 if missing else 0)"
+      ]
+    },
+    {
+      "name": "create_generation_directory",
+      "type": "mkdir",
+      "path": "{{OUTPUT_PATH}}"
+    },
+    {
+      "name": "generation_adapter",
+      "type": "command",
+      "args": [
+        "python",
+        "{{REPO_ROOT}}/scripts/adapters/ai_generate.py",
+        "--project-id",
+        "{{PROJECT_ID}}",
+        "--project-slug",
+        "{{PROJECT_SLUG}}",
+        "--shot-id",
+        "{{SHOT_ID}}",
+        "--prompt-id",
+        "{{PROMPT_ID}}",
+        "--model-id",
+        "{{MODEL_ID}}",
+        "--output",
+        "{{OUTPUT_PATH}}"
+      ]
+    },
+    {
+      "name": "register_generation_outputs",
+      "type": "command",
+      "args": [
+        "python",
+        "{{REPO_ROOT}}/scripts/adapters/register_generation.py",
+        "--project-id",
+        "{{PROJECT_ID}}",
+        "--project-slug",
+        "{{PROJECT_SLUG}}",
+        "--shot-id",
+        "{{SHOT_ID}}",
+        "--prompt-id",
+        "{{PROMPT_ID}}",
+        "--model-id",
+        "{{MODEL_ID}}",
+        "--output",
+        "{{OUTPUT_PATH}}"
+      ]
+    },
+    {
+      "name": "generation_manifest",
+      "type": "manifest",
+      "checksums": true,
+      "max_checksum_mb": 250
+    },
+    {
+      "name": "handoff_to_qc",
+      "type": "command",
+      "args": [
+        "python",
+        "{{REPO_ROOT}}/scripts/adapters/qc_generation.py",
+        "--project-id",
+        "{{PROJECT_ID}}",
+        "--project-slug",
+        "{{PROJECT_SLUG}}",
+        "--shot-id",
+        "{{SHOT_ID}}",
+        "--output",
+        "{{OUTPUT_PATH}}"
+      ]
+    }
+  ]
+}
