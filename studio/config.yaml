@@ -1,0 +1,121 @@
+# ============================================================
+# AI FILM STUDIO - MODULAR STUDIO CONFIGURATION
+# ============================================================
+#
+# Lightweight-machine-first defaults.
+#
+# - Everything here must run on a laptop with no GPU.
+# - Heavy AI integrations are DISABLED by default.
+# - Paths are relative to the repository root unless noted.
+# - Asset / render paths are relative to a PROJECT root and
+#   deliberately live inside the numbered folders created by
+#   scripts/create_project.py, so both systems share one layout.
+#
+# This file is parsed by studio/orchestrator/config.py, which
+# uses PyYAML when installed and a small built-in parser
+# otherwise. Keep to simple YAML: nested mappings, scalars,
+# and inline lists [a, b].
+# ============================================================
+
+studio:
+  version: 0.1.0
+  machine_profile: lightweight
+
+# ------------------------------------------------------------
+# Projects
+# ------------------------------------------------------------
+# Same root the existing engine uses:
+#   projects/<PROJECT_ID>/<project-slug>/
+projects:
+  root: projects
+  # Used when no --project-id is given. Kept outside the
+  # engine's PROJECT_<YEAR>_<NNN> numbering so it never collides
+  # with `create_project.py init`.
+  default_project_id: STUDIO_DRAFT
+  # SMALL | STANDARD | FULL  (same meaning as create_project.py)
+  default_complexity: SMALL
+
+# ------------------------------------------------------------
+# Asset directories (relative to the project root)
+# ------------------------------------------------------------
+assets:
+  stock: 01_research/references/stock
+  maps: 05_production-design/maps
+  vectors: 05_production-design/vectors
+  images: 09_ai-generation/selected
+  video_clips: 12_edit/selects
+  voice: 14_sound/dialogue
+  sfx: 14_sound/sfx
+  music: 15_music/cues
+  subtitles: 21_distribution/subtitles
+  temp: 00_admin/temp
+
+# ------------------------------------------------------------
+# Rendering
+# ------------------------------------------------------------
+render:
+  # relative to the project root (ignored by .gitignore)
+  output_dir: 18_technical/renders
+  preview_dir: 18_technical/previews
+  resolution: 1920x1080
+  fps: 30
+  # Draft renders at reduced size to stay fast on weak machines.
+  preview_resolution: 1280x720
+  video_codec: h264
+  pixel_format: yuv420p
+  # Lower CRF = higher quality / bigger files.
+  crf: 20
+  # Faster presets trade file size for speed on weak CPUs.
+  preset: veryfast
+  container: mp4
+  hardware_acceleration: false
+
+# ------------------------------------------------------------
+# Audio
+# ------------------------------------------------------------
+audio:
+  sample_rate: 48000
+  channels: 2
+  bit_depth: 24
+  delivery_codec: aac
+  delivery_bitrate: 192k
+  # Integrated loudness target for online delivery.
+  loudness_target_lufs: -14
+  true_peak_dbtp: -1.0
+
+# ------------------------------------------------------------
+# Subtitles
+# ------------------------------------------------------------
+subtitles:
+  format: srt
+  max_chars_per_line: 42
+  max_lines: 2
+
+# ------------------------------------------------------------
+# Processing preference
+# ------------------------------------------------------------
+processing:
+  # local | external | hybrid
+  preference: local
+  # Never send assets to a remote service unless this is true.
+  allow_external: false
+  require_gpu: false
+  max_parallel_jobs: 1
+  # Pipeline plans and prints; it does not execute adapters
+  # unless explicitly told to.
+  dry_run: true
+
+# ------------------------------------------------------------
+# Integration switches for THIS machine
+# ------------------------------------------------------------
+# Definitions live in integrations/registry.yaml.
+# An integration runs only if it is enabled BOTH here and in
+# the registry. Heavy AI integrations stay off by default.
+integrations:
+  stock: false
+  maps: false
+  vectors: false
+  tts: false
+  transcription: false
+  image_generation: false
+  video_generation: false

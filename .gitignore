@@ -449,3 +449,28 @@ reports-temp/
 # ------------------------------------------------------------
 # END
 # ------------------------------------------------------------
+
+# ------------------------------------------------------------
+# Modular Studio (studio/ code + integrations/ + projects/)
+# ------------------------------------------------------------
+
+# Generated projects stay local; keep only the empty root.
+projects/*
+!projects/.gitkeep
+
+# studio/render/ holds render CODE, not render output. The
+# generic `render/` rule above would otherwise hide it.
+!studio/render/
+
+# External repositories cloned / vendored for adapters, and
+# their caches, never belong in this repository.
+integrations/*/vendor/
+integrations/*/repo/
+integrations/*/.cache/
+integrations/*/output/
+
+# Studio runtime caches / temporary assets
+.studio-cache/
+.studio-tmp/
+studio/**/.cache/
+studio/**/output/
