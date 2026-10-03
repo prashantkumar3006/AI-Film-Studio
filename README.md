@@ -1,23 +1,60 @@
 # AI-Film-Studio
-AI-powered film and documentary production studio: directing, writing, cinematography, editing, VFX, sound, color, and production workflows.
 
-## Modular architecture
+An automated production studio for an original anime series — fantasy, sci-fi
+and supernatural, grounded at first — for a general audience on YouTube, in
+English and Hindi. Claude handles writing, generation, assembly and QC; the
+owner approves at three checkpoints.
 
-The repository is being prepared as a modular, automated video-production studio:
+**The plan:** [`docs/WORKPLAN.md`](docs/WORKPLAN.md) — decisions, roles, the
+episode pipeline, all 37 build steps with their done-tests, tool stack,
+licences and risks.
 
-- **`studio/`** — department knowledge (`<department>/SKILL.md`) plus execution modules:
-  `orchestrator/`, `asset_manager/`, `render/`, `audio/`, `video/`, `subtitles/`, `qc/`.
-  Settings live in `studio/config.yaml` (lightweight defaults: 1920×1080 @ 30 fps, local processing).
-- **`integrations/`** — external tools (stock, maps, vectors, TTS, transcription, image/video
-  generation) connected through adapters and catalogued in `integrations/registry.yaml`.
-  All heavy AI integrations are disabled by default.
-- **`projects/`** — generated project folders (git-ignored).
-- **`scripts/create_project.py`** — the existing engine; still owns project state and workflow execution.
+**Current phase:** 1 · Spine. Step 1.1 (the Production Bible schema and
+validator) is done; no worker produces media yet.
 
-Try the orchestration skeleton (standard library only):
+## Quick start
 
 ```bash
-python studio/orchestrator/pipeline.py --workflow scripts/workflows/production_pipeline.json --slug my-first-film --plan-only
+pip install -e ".[dev]"                     # adds the `studio` command
+studio validate examples/ep00/bible.json    # check a Production Bible
+python -m pytest                            # run the tests
 ```
 
-See [`studio/README.md`](studio/README.md) and [`integrations/README.md`](integrations/README.md).
+On Windows without installing: `python -m studio.cli validate examples\ep00\bible.json`.
+
+## How an episode is made
+
+```
+Brief → Writer and director (bible.json) → Checkpoint A
+      → Voices → Lip sync → Score          (sound)
+      → Sets → Keyframes → Checkpoint B → Motion   (picture)
+      → Assembly → Finishing and QC → Checkpoint C → Publish
+```
+
+A failed QC check sends only the failing shot back to its worker. The full
+diagram, with the tool and platform for each stage, is in `docs/WORKPLAN.md`.
+
+## Where things run
+
+| Laptop (Windows, CPU) | GridShare GPU (RTX 4090, per-second billing) |
+|---|---|
+| Claude Code, Kokoro voices, Rhubarb lip sync, Remotion assembly, FFmpeg QC, Blender scene set-up via BlenderMCP | ComfyUI + Animagine XL 4.0, kohya_ss character models, Wan2.2 motion, ACE-Step score, Real-ESRGAN upscaling, headless Blender renders |
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `CLAUDE.md` | Short working guide for Claude |
+| `docs/WORKPLAN.md` | The plan and every build step |
+| `schema/bible.schema.json` | Production Bible contract |
+| `studio/bible/`, `studio/cli.py` | Validator and the `studio` command |
+| `studio/orchestrator/` | Pipeline skeleton (`--plan-only` prints every stage) |
+| `docs/reference/` | Operating system, creative principles, prompt system, media storage |
+| `docs/ARCHIVE.md` | What was removed, why, and how to recover it |
+| `studio/<department>/SKILL.md` | Department instructions (25 departments) |
+| `integrations/registry.yaml` | Every external tool with repository, licences and where it runs |
+| `examples/ep00/` | Pipeline test scene (not canon) |
+| `scripts/create_project.py` | Project-state engine |
+| `projects/` | Real projects (git-ignored) |
+
+Media, model files and secrets never go into Git; `.gitignore` enforces this.

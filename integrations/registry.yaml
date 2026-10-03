@@ -2,86 +2,259 @@
 # AI FILM STUDIO - INTEGRATION REGISTRY
 # ============================================================
 #
-# Catalogue of external capabilities the studio can call.
-# Each entry is connected through an adapter; the core studio
-# never imports an external repository directly.
+# Every external tool the pipeline may call, chosen in
+# docs/WORKPLAN.md (decisions of 3 October 2026). Each one is
+# reached through an adapter; the core studio never imports an
+# external repository directly.
 #
 # Fields
-#   name            human-readable name
-#   type            capability category (matches the key)
-#   enabled         catalogue default; must ALSO be enabled in
-#                   studio/config.yaml to run on a machine
-#   execution_mode  local | external | hybrid
-#   repository      upstream GitHub repo, or null until chosen
-#   adapter         module path the orchestrator will load,
-#                   or null until the adapter is written
-#   heavy           true = needs significant CPU/GPU/RAM
+#   name              human-readable name
+#   type              capability category
+#   enabled           catalogue default; must ALSO be true in
+#                     studio/config.yaml to run on a machine
+#   execution_mode    local | external | hybrid
+#                     (external = runs on a rented GridShare GPU)
+#   runs_on           laptop | gridshare | laptop+gridshare
+#   gpu               GridShare card, if any
+#   repository        upstream code repository
+#   weights           upstream model weights, if separate
+#   licence_code      licence of the code
+#   licence_weights   licence of the model weights (null = none)
+#   licence_source    page the licence was read from
+#   licence_checked   date it was read, or "no" if not yet read
+#   adapter           importable module, null until written
+#   adapter_planned   where the adapter will live
+#   workplan_step     step in docs/WORKPLAN.md that builds it
+#   heavy             true = needs a GPU or lots of RAM
 #
-# Repositories are intentionally null. Choose and pin them
-# (with a commit or tag) when each adapter is implemented.
+# RULE: nothing is enabled until licence_checked is a date and
+# both licences allow commercial use.
+#
+# Keep to the simple YAML subset described in
+# studio/orchestrator/config.py: nested mappings, scalars,
+# inline lists. Quote any value that contains ": ".
 # ============================================================
 
 integrations:
 
-  stock:
-    name: Stock media
-    type: stock
-    enabled: false
-    execution_mode: external
-    repository: null
-    adapter: null
-    heavy: false
-
-  maps:
-    name: Maps and geographic data
-    type: maps
-    enabled: false
-    execution_mode: hybrid
-    repository: null
-    adapter: null
-    heavy: false
-
-  vectors:
-    name: Vector graphics
-    type: vectors
-    enabled: false
-    execution_mode: local
-    repository: null
-    adapter: null
-    heavy: false
-
   tts:
-    name: Text to speech
+    name: English voices (Kokoro-82M)
     type: tts
     enabled: false
     execution_mode: local
+    runs_on: laptop
+    gpu: null
     repository: null
+    weights: https://huggingface.co/hexgrad/Kokoro-82M
+    licence_code: Apache-2.0
+    licence_weights: Apache-2.0
+    licence_source: https://huggingface.co/hexgrad/Kokoro-82M
+    licence_checked: 2026-10-03
     adapter: null
-    heavy: true
+    adapter_planned: integrations.tts.adapter
+    workplan_step: "1.3"
+    heavy: false
+
+  tts_hindi:
+    name: Hindi voices (bake-off winner)
+    type: tts
+    enabled: false
+    execution_mode: hybrid
+    runs_on: laptop+gridshare
+    gpu: "₹12/hr tier if the laptop is too slow"
+    candidates: [indic-parler-tts, chatterbox-multilingual-hi, kokoro-hindi]
+    candidate_sources: [https://huggingface.co/ai4bharat/indic-parler-tts, https://github.com/resemble-ai/chatterbox, https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md]
+    candidate_licences: [Apache-2.0, MIT, Apache-2.0]
+    repository: null
+    weights: null
+    licence_code: null
+    licence_weights: null
+    licence_source: null
+    licence_checked: 2026-10-03
+    adapter: null
+    adapter_planned: integrations.tts.hindi_adapter
+    workplan_step: "1.4 and 1.5"
+    heavy: false
+    notes: "Chatterbox watermarks every output and can clone a reference voice across languages; references must be synthetic or used with consent."
 
   transcription:
-    name: Speech transcription
+    name: Whisper round-trip check for dialogue QC
     type: transcription
     enabled: false
     execution_mode: local
-    repository: null
+    runs_on: laptop
+    gpu: null
+    repository: https://github.com/openai/whisper
+    weights: null
+    licence_code: MIT
+    licence_weights: MIT
+    licence_source: https://github.com/openai/whisper
+    licence_checked: "no"
     adapter: null
+    adapter_planned: integrations.transcription.adapter
+    workplan_step: "1.3"
+    heavy: false
+
+  lipsync:
+    name: Mouth shapes from dialogue (Rhubarb Lip Sync)
+    type: lipsync
+    enabled: false
+    execution_mode: local
+    runs_on: laptop
+    gpu: null
+    repository: https://github.com/DanielSWolf/rhubarb-lip-sync
+    weights: null
+    licence_code: MIT
+    licence_weights: null
+    licence_source: https://github.com/DanielSWolf/rhubarb-lip-sync/blob/master/LICENSE.md
+    licence_checked: 2026-10-03
+    adapter: null
+    adapter_planned: integrations.lipsync.adapter
+    workplan_step: "2.7"
+    heavy: false
+    notes: "English uses the default recogniser; Hindi uses --recognizer phonetic."
+
+  layout_3d:
+    name: Location sets and camera layouts (Blender via BlenderMCP)
+    type: layout_3d
+    enabled: false
+    execution_mode: hybrid
+    runs_on: laptop+gridshare
+    gpu: "RTX 4090 for headless renders"
+    repository: https://github.com/ahujasid/blender-mcp
+    weights: null
+    licence_code: MIT
+    licence_weights: null
+    licence_source: https://github.com/ahujasid/blender-mcp
+    licence_checked: 2026-10-03
+    adapter: null
+    adapter_planned: integrations.layout_3d.adapter
+    workplan_step: "2.4"
+    heavy: true
+    notes: "Socket has no authentication; keep it on localhost. Save the scene before every session."
+
+  lora_training:
+    name: Character LoRA training (kohya_ss)
+    type: lora_training
+    enabled: false
+    execution_mode: external
+    runs_on: gridshare
+    gpu: RTX 4090 24GB
+    repository: https://github.com/bmaltais/kohya_ss
+    weights: null
+    licence_code: Apache-2.0
+    licence_weights: null
+    licence_source: https://github.com/bmaltais/kohya_ss
+    licence_checked: 2026-10-03
+    adapter: null
+    adapter_planned: integrations.lora_training.adapter
+    workplan_step: "2.3"
     heavy: true
 
   image_generation:
-    name: AI image generation
+    name: Anime keyframes (ComfyUI + Animagine XL 4.0)
     type: image_generation
     enabled: false
     execution_mode: external
-    repository: null
+    runs_on: gridshare
+    gpu: RTX 4090 24GB
+    repository: https://github.com/comfyanonymous/ComfyUI
+    weights: https://huggingface.co/cagliostrolab/animagine-xl-4.0
+    licence_code: GPL-3.0
+    licence_weights: CreativeML-OpenRAIL++-M
+    licence_source: https://huggingface.co/cagliostrolab/animagine-xl-4.0
+    licence_checked: "weights 2026-10-03; ComfyUI code no"
     adapter: null
+    adapter_planned: integrations.image_generation.adapter
+    workplan_step: "1.10 and 2.5"
     heavy: true
+    notes: "ControlNet and IP-Adapter models carry their own licences; record each before first use. Existing scripts/adapters/ai_generate.py can be wrapped."
 
   video_generation:
-    name: AI video generation
+    name: Hero-shot motion (Wan2.2 TI2V-5B image-to-video)
     type: video_generation
     enabled: false
     execution_mode: external
-    repository: null
+    runs_on: gridshare
+    gpu: RTX 4090 24GB
+    repository: https://github.com/Wan-Video/Wan2.2
+    weights: null
+    licence_code: Apache-2.0
+    licence_weights: Apache-2.0
+    licence_source: https://github.com/Wan-Video/Wan2.2
+    licence_checked: 2026-10-03
     adapter: null
+    adapter_planned: integrations.video_generation.adapter
+    workplan_step: "2.6"
     heavy: true
+    notes: "The 14B models need at least 80 GB of VRAM; GridShare's largest NVIDIA card has 32 GB."
+
+  music:
+    name: Score (ACE-Step 1.5)
+    type: music
+    enabled: false
+    execution_mode: external
+    runs_on: gridshare
+    gpu: "₹12/hr tier (under 4 GB of VRAM)"
+    repository: null
+    weights: https://huggingface.co/ACE-Step/acestep-v15-base
+    licence_code: MIT
+    licence_weights: MIT
+    licence_source: https://huggingface.co/ACE-Step/acestep-v15-base/blob/main/README.md
+    licence_checked: 2026-10-03
+    adapter: null
+    adapter_planned: integrations.music.adapter
+    workplan_step: "2.8"
+    heavy: true
+    notes: "Sound effects come from CC0 libraries; record each file's source."
+
+  upscaling:
+    name: Final upscaling (Real-ESRGAN anime models)
+    type: upscaling
+    enabled: false
+    execution_mode: external
+    runs_on: gridshare
+    gpu: RTX 4090 24GB
+    repository: https://github.com/xinntao/Real-ESRGAN
+    weights: null
+    licence_code: BSD-3-Clause
+    licence_weights: null
+    licence_source: https://github.com/xinntao/Real-ESRGAN
+    licence_checked: 2026-10-03
+    adapter: null
+    adapter_planned: integrations.upscaling.adapter
+    workplan_step: "2.9"
+    heavy: true
+
+  assembly:
+    name: Timeline, mouth shapes, subtitles and titles (Remotion)
+    type: assembly
+    enabled: false
+    execution_mode: local
+    runs_on: laptop
+    gpu: null
+    repository: https://github.com/remotion-dev/remotion
+    weights: null
+    licence_code: "Remotion License: free for individuals and teams of up to 3"
+    licence_weights: null
+    licence_source: https://www.remotion.dev/docs/license/faq
+    licence_checked: 2026-10-03
+    adapter: null
+    adapter_planned: integrations.assembly.adapter
+    workplan_step: "1.7"
+    heavy: false
+
+# ------------------------------------------------------------
+# Rejected: popular, but their weights forbid commercial use
+# or need their own licence review before any monetised use.
+# ------------------------------------------------------------
+blocked:
+  musicgen:
+    reason: "weights are CC-BY-NC-4.0, non-commercial"
+    source: https://huggingface.co/facebook/musicgen-large
+  f5_tts:
+    reason: "pretrained weights are CC-BY-NC"
+    source: https://github.com/SWivid/F5-TTS
+  xtts_v2:
+    reason: "Coqui Public Model License; review before any monetised use"
+    source: https://huggingface.co/coqui/XTTS-v2

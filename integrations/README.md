@@ -1,8 +1,8 @@
 # Integrations
 
-External capabilities the studio can use — stock media, maps, vector
-graphics, text-to-speech, transcription, image generation and video
-generation.
+External tools the pipeline calls — voices, transcription, lip sync, 3D
+layout, character models, image and video generation, score, upscaling and
+assembly.
 
 ## Principle: adapters, not dependencies
 
@@ -12,7 +12,7 @@ adapters**. They do not become part of the core studio:
 - The core (`studio/`) never imports an external repository directly.
 - Each capability gets one thin adapter in `integrations/<type>/adapter.py`
   that translates between the studio's contract and the external tool.
-- Swapping one TTS engine or stock provider for another means rewriting
+- Swapping one TTS engine or image model for another means rewriting
   one adapter — not touching the orchestrator, config or workflows.
 - An external repository's heavy dependencies stay with that repository
   (its own virtual environment, container or install), so the studio
@@ -30,26 +30,38 @@ AI generation; future image/video generation adapters can wrap it.
 
 ## Layout
 
-| Folder | Capability | Default |
-|---|---|---|
-| `stock/` | Stock footage, photos, audio | disabled |
-| `maps/` | Maps and geographic data | disabled |
-| `vectors/` | Vector graphics / illustration | disabled |
-| `tts/` | Text-to-speech | disabled (heavy) |
-| `transcription/` | Speech-to-text | disabled (heavy) |
-| `image_generation/` | AI image generation | disabled (heavy) |
-| `video_generation/` | AI video generation | disabled (heavy) |
+Chosen tools, from the decisions of 3 October 2026 (`docs/WORKPLAN.md`):
+
+| Folder | Capability | Chosen tool | Runs on | Step |
+|---|---|---|---|---|
+| `tts/` | English and Hindi voices | Kokoro-82M; Hindi from a bake-off | laptop, GridShare if needed | 1.3–1.5 |
+| `transcription/` | Round-trip check of every voice line | Whisper | laptop | 1.3 |
+| `lipsync/` | Mouth shapes from dialogue | Rhubarb Lip Sync | laptop | 2.7 |
+| `layout_3d/` | Location sets, cameras, depth and line-art passes | Blender via BlenderMCP | laptop + GridShare | 2.4 |
+| `lora_training/` | One model per main character | kohya_ss | GridShare | 2.3 |
+| `image_generation/` | Anime keyframes | ComfyUI + Animagine XL 4.0 | GridShare | 1.10, 2.5 |
+| `video_generation/` | Hero-shot motion | Wan2.2 TI2V-5B | GridShare | 2.6 |
+| `music/` | Score | ACE-Step 1.5 | GridShare | 2.8 |
+| `upscaling/` | Final resolution | Real-ESRGAN anime models | GridShare | 2.9 |
+| `assembly/` | Timeline, subtitles, titles | Remotion | laptop | 1.7 |
+
+The earlier `stock/`, `maps/` and `vectors/` slots were removed; see
+`docs/ARCHIVE.md`.
+
+Every entry is disabled until its adapter exists and its workplan step's
+done-test passes.
 
 ## Registry
 
 `registry.yaml` lists every integration with:
 
 `name`, `type`, `enabled`, `execution_mode` (`local` / `external` / `hybrid`),
-`repository`, `adapter`, and `heavy`.
+`runs_on`, `gpu`, `repository`, `weights`, `licence_code`, `licence_weights`,
+`licence_source`, `licence_checked`, `adapter`, `adapter_planned`,
+`workplan_step` and `heavy`. Its `blocked:` section lists popular tools that
+were rejected because their weights forbid commercial use.
 
-`repository` and `adapter` are `null` on purpose. Fill them in only when a
-specific repository has been chosen and evaluated, and pin it to a tag or
-commit for reproducibility.
+Pin each repository to a tag or commit when its adapter is written.
 
 ## Enabling an integration
 
@@ -62,4 +74,5 @@ All of these must be true for it to run:
 5. `processing.dry_run: false` to actually call it
 
 Before enabling a new integration, check its licence, rights terms and
-hardware requirements (see `studio/legal-rights/` and `studio/technical-post/`).
+hardware requirements (see `studio/legal-rights/` and `studio/technical-post/`),
+and record the licence of both the code and the weights in `registry.yaml`.

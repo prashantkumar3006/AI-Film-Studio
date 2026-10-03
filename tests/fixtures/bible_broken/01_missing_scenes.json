@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "project": {
+    "id": "EP00",
+    "series": "Untitled series",
+    "title": "Last Cup (pipeline test scene)",
+    "canon": false,
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "primary_language": "en",
+    "audience": {
+      "made_for_kids": false,
+      "intended": "general audience"
+    },
+    "version": 1,
+    "status": "draft",
+    "checkpoints": {
+      "A_script": "pending",
+      "B_keyframes": "pending",
+      "C_final_cut": "pending"
+    },
+    "notes": "BROKEN ON PURPOSE: the required 'scenes' list is missing"
+  },
+  "characters": [
+    {
+      "id": "CH_MIRA",
+      "name": {
+        "en": "Mira",
+        "hi": "मीरा"
+      },
+      "role": "Owner of a roadside chai stall; calm, watchful, knows more than she says",
+      "voices": {
+        "en": {
+          "engine": "kokoro",
+          "voice": "af_heart"
+        },
+        "hi": {
+          "engine": "pending_bakeoff",
+          "voice": null
+        }
+      },
+      "reference_sheet": null,
+      "lora": null
+    },
+    {
+      "id": "CH_KABIR",
+      "name": {
+        "en": "Kabir",
+        "hi": "कबीर"
+      },
+      "role": "Night-shift delivery rider in his twenties; tired, polite, unsettled",
+      "voices": {
+        "en": {
+          "engine": "kokoro",
+          "voice": "am_adam"
+        },
+        "hi": {
+          "engine": "pending_bakeoff",
+          "voice": null
+        }
+      },
+      "reference_sheet": null,
+      "lora": null
+    }
+  ],
+  "locations": [
+    {
+      "id": "LOC_CHAI_STALL",
+      "name": "Chai stall under a city flyover",
+      "description": "A small roadside stall lit by one bulb and a streetlight, rain falling past the flyover's edge, an old wall clock above the stove.",
+      "blend_file": null
+    }
+  ],
+  "assets": [],
+  "jobs": []
+}
