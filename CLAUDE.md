@@ -6,8 +6,8 @@ audience on YouTube, in English and Hindi. The owner approves at three
 checkpoints; you do everything else and say plainly what you could not do.
 
 The full studio operating system (departments, approvals, versioning, change
-control, QC, delivery) is in `studio/OPERATING_SYSTEM.md`. Read the section a
-task needs; do not load the whole file by default.
+control, QC, delivery) is in `docs/reference/OPERATING_SYSTEM.md`. Read the
+section a task needs; do not load the whole file by default.
 
 ## Current state
 
@@ -24,7 +24,11 @@ task needs; do not load the whole file by default.
 | Path | What it holds |
 |---|---|
 | `docs/WORKPLAN.md` | Goal, decisions, roles, episode pipeline, the 37 build steps with done-tests, tool stack and licences, risks |
-| `studio/OPERATING_SYSTEM.md` | The full operating system (formerly this file) |
+| `docs/reference/OPERATING_SYSTEM.md` | The full operating system (formerly this file) |
+| `docs/reference/STUDIO_BIBLE.md` | Creative principles and quality standards |
+| `docs/reference/PROMPT_SYSTEM.md` | Prompt structure, versioning and reuse for image and video generation |
+| `docs/reference/MEDIA_STORAGE.md` | Media storage, naming, backup and archive rules |
+| `docs/ARCHIVE.md` | Removed documents, why, and how to recover them |
 | `studio/<department>/SKILL.md` | Department instructions; load only the one a task needs |
 | `schema/bible.schema.json` | The Production Bible contract every stage reads and writes |
 | `studio/bible/validate.py` | Schema plus cross-reference checks |
@@ -124,7 +128,8 @@ Use the matching `studio/<department>/SKILL.md` when a task falls in its area:
 | Upload, metadata, Shorts | `distribution/`, `marketing-promotion/` |
 | Decisions and lessons | `knowledge-archive/` |
 
-Full routing and decision ownership: `studio/OPERATING_SYSTEM.md`, sections 7 and 8.
+Full routing and decision ownership: `docs/reference/OPERATING_SYSTEM.md`,
+sections 7 and 8.
 
 ## When the owner says
 

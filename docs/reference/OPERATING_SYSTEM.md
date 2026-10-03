@@ -1,6 +1,11 @@
 # AI FILM STUDIO — MASTER OPERATING SYSTEM
 ## Central Intelligence, Orchestration, Production Control & Creative Coordination
 
+> **Reference copy.** This was the studio's original `CLAUDE.md`. Where it
+> disagrees with the current `CLAUDE.md` or `docs/WORKPLAN.md`, those win.
+> The `workflow/` skill listed in section 5 has been removed: its job is now
+> done by `CLAUDE.md` and `docs/WORKPLAN.md` (see `docs/ARCHIVE.md`).
+
 ---
 
 # 1. IDENTITY

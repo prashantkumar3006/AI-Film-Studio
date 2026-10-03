@@ -5,33 +5,36 @@ validates and creates directories, but does not generate or render media.
 
 ## Execution flow
 
+The episode pipeline from `docs/WORKPLAN.md`. Sound and picture run side by
+side; the owner approves at three checkpoints.
+
 ```
-Input
-  → Workflow
-  → Project creation
-  → Asset acquisition
-  → Asset processing
-  → Audio
-  → Animation
-  → Rendering
-  → QC
-  → Final output
+Brief → Workflow → Project → Writer (bible.json) → Checkpoint A
+      → Voices → Layout → Lip sync → Keyframes → Checkpoint B
+      → Score → Motion → Assembly → Finishing and QC → Checkpoint C → Publish
 ```
 
 | # | Stage | Owner module | Integrations used |
 |---|---|---|---|
-| 1 | Input | — | — |
+| 1 | Brief (owner) | — | — |
 | 2 | Workflow | `orchestrator` | — |
 | 3 | Project creation | `orchestrator` | — |
-| 4 | Asset acquisition | `asset_manager` | stock, maps, vectors, image_generation, video_generation |
-| 5 | Asset processing | `asset_manager` | — |
-| 6 | Audio | `audio` | tts, transcription |
-| 7 | Animation | `video` | — |
-| 8 | Rendering | `render` | — |
-| 9 | QC | `qc` | — |
-| 10 | Final output | `render` | — |
+| 4 | Writer and director: `bible.json` | `orchestrator` | — |
+| 5 | Checkpoint A (owner): script, dialogue, lore | — | — |
+| 6 | Voices | `audio` | tts, tts_hindi, transcription |
+| 7 | Sets and layout | `asset_manager` | layout_3d |
+| 8 | Lip sync | `audio` | lipsync |
+| 9 | Keyframes | `asset_manager` | lora_training, image_generation |
+| 10 | Checkpoint B (owner): one keyframe per shot | — | — |
+| 11 | Score and effects | `audio` | music |
+| 12 | Motion | `video` | video_generation |
+| 13 | Assembly | `render` | assembly |
+| 14 | Finishing and QC | `qc` | upscaling |
+| 15 | Checkpoint C (owner): final cut | — | — |
+| 16 | Publish (owner): YouTube | — | — |
 
-The stage list lives in `STAGES` in `pipeline.py`.
+The stage list lives in `STAGES` in `pipeline.py`. A failed QC check sends
+only the failing shot back to its stage.
 
 ## What `pipeline.py` does today
 

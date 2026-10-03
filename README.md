@@ -49,8 +49,9 @@ diagram, with the tool and platform for each stage, is in `docs/WORKPLAN.md`.
 | `schema/bible.schema.json` | Production Bible contract |
 | `studio/bible/`, `studio/cli.py` | Validator and the `studio` command |
 | `studio/orchestrator/` | Pipeline skeleton (`--plan-only` prints every stage) |
-| `studio/OPERATING_SYSTEM.md` | Full studio operating system: departments, approvals, versioning |
-| `studio/<department>/SKILL.md` | Department instructions |
+| `docs/reference/` | Operating system, creative principles, prompt system, media storage |
+| `docs/ARCHIVE.md` | What was removed, why, and how to recover it |
+| `studio/<department>/SKILL.md` | Department instructions (25 departments) |
 | `integrations/registry.yaml` | Every external tool with repository, licences and where it runs |
 | `examples/ep00/` | Pipeline test scene (not canon) |
 | `scripts/create_project.py` | Project-state engine |

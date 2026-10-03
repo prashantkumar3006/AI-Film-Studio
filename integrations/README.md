@@ -1,8 +1,8 @@
 # Integrations
 
-External capabilities the studio can use — stock media, maps, vector
-graphics, text-to-speech, transcription, image generation and video
-generation.
+External tools the pipeline calls — voices, transcription, lip sync, 3D
+layout, character models, image and video generation, score, upscaling and
+assembly.
 
 ## Principle: adapters, not dependencies
 
@@ -12,7 +12,7 @@ adapters**. They do not become part of the core studio:
 - The core (`studio/`) never imports an external repository directly.
 - Each capability gets one thin adapter in `integrations/<type>/adapter.py`
   that translates between the studio's contract and the external tool.
-- Swapping one TTS engine or stock provider for another means rewriting
+- Swapping one TTS engine or image model for another means rewriting
   one adapter — not touching the orchestrator, config or workflows.
 - An external repository's heavy dependencies stay with that repository
   (its own virtual environment, container or install), so the studio
@@ -44,7 +44,9 @@ Chosen tools, from the decisions of 3 October 2026 (`docs/WORKPLAN.md`):
 | `music/` | Score | ACE-Step 1.5 | GridShare | 2.8 |
 | `upscaling/` | Final resolution | Real-ESRGAN anime models | GridShare | 2.9 |
 | `assembly/` | Timeline, subtitles, titles | Remotion | laptop | 1.7 |
-| `stock/`, `maps/`, `vectors/` | Earlier design | not in the current plan | — | — |
+
+The earlier `stock/`, `maps/` and `vectors/` slots were removed; see
+`docs/ARCHIVE.md`.
 
 Every entry is disabled until its adapter exists and its workplan step's
 done-test passes.
@@ -72,4 +74,5 @@ All of these must be true for it to run:
 5. `processing.dry_run: false` to actually call it
 
 Before enabling a new integration, check its licence, rights terms and
-hardware requirements (see `studio/legal-rights/` and `studio/technical-post/`).
+hardware requirements (see `studio/legal-rights/` and `studio/technical-post/`),
+and record the licence of both the code and the weights in `registry.yaml`.

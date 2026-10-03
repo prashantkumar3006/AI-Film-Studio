@@ -39,9 +39,6 @@ projects:
 # Asset directories (relative to the project root)
 # ------------------------------------------------------------
 assets:
-  stock: 01_research/references/stock
-  maps: 05_production-design/maps
-  vectors: 05_production-design/vectors
   images: 09_ai-generation/selected
   video_clips: 12_edit/selects
   voice: 14_sound/dialogue
@@ -137,6 +134,3 @@ integrations:
   music: false
   upscaling: false
   assembly: false
-  stock: false
-  maps: false
-  vectors: false

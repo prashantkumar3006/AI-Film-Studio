@@ -244,34 +244,6 @@ integrations:
     workplan_step: "1.7"
     heavy: false
 
-  # Kept from the earlier design; not used by the current plan.
-  stock:
-    name: Stock media (not in the current plan)
-    type: stock
-    enabled: false
-    execution_mode: external
-    repository: null
-    adapter: null
-    heavy: false
-
-  maps:
-    name: Maps and geographic data (not in the current plan)
-    type: maps
-    enabled: false
-    execution_mode: hybrid
-    repository: null
-    adapter: null
-    heavy: false
-
-  vectors:
-    name: Vector graphics (not in the current plan)
-    type: vectors
-    enabled: false
-    execution_mode: local
-    repository: null
-    adapter: null
-    heavy: false
-
 # ------------------------------------------------------------
 # Rejected: popular, but their weights forbid commercial use
 # or need their own licence review before any monetised use.
