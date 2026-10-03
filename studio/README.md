@@ -9,7 +9,7 @@
 
 The knowledge layer decides *what should happen*. The execution layer
 makes it happen repeatably. Nothing in the execution layer replaces a
-department's ownership of its decisions (see `CLAUDE.md`, §8).
+department's ownership of its decisions (see `studio/OPERATING_SYSTEM.md`, §8).
 
 The existing engine, `scripts/create_project.py`, remains the source of
 truth for project state, tasks, approvals and workflow step execution.

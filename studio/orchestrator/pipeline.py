@@ -63,18 +63,24 @@ class Stage:
 
 
 STAGES: List[Stage] = [
-    Stage("input", "Input"),
+    # Matches the episode pipeline in docs/WORKPLAN.md: sound and picture
+    # run side by side, three human checkpoints sit between the stages.
+    Stage("brief", "Brief (you)"),
     Stage("workflow", "Workflow", module="orchestrator"),
     Stage("project", "Project creation", module="orchestrator"),
-    Stage("asset_acquisition", "Asset acquisition",
-          ("stock", "maps", "vectors", "image_generation", "video_generation"),
-          module="asset_manager"),
-    Stage("asset_processing", "Asset processing", module="asset_manager"),
-    Stage("audio", "Audio", ("tts", "transcription"), module="audio"),
-    Stage("animation", "Animation", module="video"),
-    Stage("rendering", "Rendering", module="render"),
-    Stage("qc", "QC", module="qc"),
-    Stage("final_output", "Final output", module="render"),
+    Stage("writer", "Writer and director: bible.json", module="orchestrator"),
+    Stage("checkpoint_a", "Checkpoint A (you): script, dialogue, lore"),
+    Stage("voices", "Voices", ("tts", "tts_hindi", "transcription"), module="audio"),
+    Stage("layout", "Sets and layout", ("layout_3d",), module="asset_manager"),
+    Stage("lipsync", "Lip sync", ("lipsync",), module="audio"),
+    Stage("keyframes", "Keyframes", ("lora_training", "image_generation"), module="asset_manager"),
+    Stage("checkpoint_b", "Checkpoint B (you): one keyframe per shot"),
+    Stage("score", "Score and effects", ("music",), module="audio"),
+    Stage("motion", "Motion", ("video_generation",), module="video"),
+    Stage("assembly", "Assembly", ("assembly",), module="render"),
+    Stage("finishing", "Finishing and QC", ("upscaling",), module="qc"),
+    Stage("checkpoint_c", "Checkpoint C (you): final cut"),
+    Stage("publish", "Publish (you): YouTube"),
 ]
 
 

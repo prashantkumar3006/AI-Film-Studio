@@ -1,0 +1,282 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/prashantkumar3006/AI-Film-Studio/schema/bible.schema.json",
+  "title": "Production Bible",
+  "description": "One episode's machine-readable source of truth. Every pipeline stage reads it and writes back only its own fields and assets. Cross-references (characters, locations, languages, unique IDs) are checked by studio/bible/validate.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "project", "characters", "scenes"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "project": { "$ref": "#/$defs/project" },
+    "characters": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/character" }
+    },
+    "locations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/location" },
+      "default": []
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/scene" }
+    },
+    "assets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/asset" },
+      "default": []
+    },
+    "jobs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/job" },
+      "default": []
+    }
+  },
+  "$defs": {
+    "episodeId": { "type": "string", "pattern": "^EP[0-9]{2}$" },
+    "sceneId": { "type": "string", "pattern": "^EP[0-9]{2}_SC[0-9]{2}$" },
+    "shotId": { "type": "string", "pattern": "^EP[0-9]{2}_SC[0-9]{2}_SH[0-9]{3}$" },
+    "lineId": { "type": "string", "pattern": "^EP[0-9]{2}_SC[0-9]{2}_SH[0-9]{3}_L[0-9]{2}$" },
+    "characterId": { "type": "string", "pattern": "^CH_[A-Z0-9_]+$" },
+    "locationId": { "type": "string", "pattern": "^LOC_[A-Z0-9_]+$" },
+    "assetId": { "type": "string", "pattern": "^AS_[A-Z0-9_]+$" },
+    "jobId": { "type": "string", "pattern": "^JOB_[A-Z0-9_]+$" },
+    "language": { "type": "string", "enum": ["en", "hi"] },
+    "localizedText": {
+      "description": "One entry per project language, e.g. {\"en\": \"...\", \"hi\": \"...\"}.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/language" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "checkpoint": { "type": "string", "enum": ["pending", "approved", "changes_requested"] },
+
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "series", "title", "languages", "audience", "version", "status", "checkpoints"],
+      "properties": {
+        "id": { "$ref": "#/$defs/episodeId" },
+        "series": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "canon": {
+          "description": "false for test scenes that must never feed the series bible.",
+          "type": "boolean",
+          "default": true
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/language" }
+        },
+        "primary_language": { "$ref": "#/$defs/language" },
+        "audience": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["made_for_kids"],
+          "properties": {
+            "made_for_kids": { "type": "boolean" },
+            "intended": { "type": "string" }
+          }
+        },
+        "version": { "type": "integer", "minimum": 1 },
+        "status": { "type": "string", "enum": ["draft", "in_production", "picture_lock", "delivered", "archived"] },
+        "checkpoints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["A_script", "B_keyframes", "C_final_cut"],
+          "properties": {
+            "A_script": { "$ref": "#/$defs/checkpoint" },
+            "B_keyframes": { "$ref": "#/$defs/checkpoint" },
+            "C_final_cut": { "$ref": "#/$defs/checkpoint" }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engine"],
+      "properties": {
+        "engine": { "type": "string", "minLength": 1 },
+        "voice": { "type": ["string", "null"] },
+        "reference_audio": { "type": ["string", "null"] },
+        "settings": { "type": "object" }
+      }
+    },
+
+    "character": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "role", "voices"],
+      "properties": {
+        "id": { "$ref": "#/$defs/characterId" },
+        "name": { "$ref": "#/$defs/localizedText" },
+        "role": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "voices": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/language" },
+          "additionalProperties": { "$ref": "#/$defs/voice" }
+        },
+        "reference_sheet": { "type": ["string", "null"] },
+        "lora": { "type": ["string", "null"] }
+      }
+    },
+
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/locationId" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "blend_file": { "type": ["string", "null"] }
+      }
+    },
+
+    "line": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "character", "text"],
+      "properties": {
+        "id": { "$ref": "#/$defs/lineId" },
+        "character": { "$ref": "#/$defs/characterId" },
+        "text": { "$ref": "#/$defs/localizedText" },
+        "delivery": { "type": "string" }
+      }
+    },
+
+    "shot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "duration_s", "description", "visual", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/shotId" },
+        "duration_s": { "type": "number", "exclusiveMinimum": 0, "maximum": 30 },
+        "description": { "type": "string", "minLength": 1 },
+        "camera": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "size": { "type": "string", "enum": ["extreme_wide", "wide", "medium", "medium_close", "close", "extreme_close", "insert"] },
+            "movement": { "type": "string" },
+            "angle": { "type": "string" }
+          }
+        },
+        "characters": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/characterId" },
+          "default": []
+        },
+        "lines": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/line" },
+          "default": []
+        },
+        "visual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "prompt"],
+          "properties": {
+            "method": {
+              "description": "placeholder = text card (Phase 1); keyframe = still with camera move; keyframe_motion = image-to-video hero shot; blender = rendered directly from a set.",
+              "type": "string",
+              "enum": ["placeholder", "keyframe", "keyframe_motion", "blender"]
+            },
+            "prompt": { "type": "string", "minLength": 1 },
+            "negative_prompt": { "type": "string" },
+            "guides": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["depth", "lineart", "pose"] }
+            }
+          }
+        },
+        "audio": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "music": { "type": "string" },
+            "sfx": { "type": "array", "items": { "type": "string" } },
+            "ambience": { "type": "string" }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["planned", "in_progress", "review", "revision_required", "approved", "final"]
+        }
+      }
+    },
+
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "shots"],
+      "properties": {
+        "id": { "$ref": "#/$defs/sceneId" },
+        "title": { "type": "string", "minLength": 1 },
+        "location": { "$ref": "#/$defs/locationId" },
+        "time_of_day": { "type": "string" },
+        "purpose": { "type": "string" },
+        "shots": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/shot" }
+        }
+      }
+    },
+
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "shot", "kind", "path", "version", "tool", "licence", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/assetId" },
+        "shot": { "$ref": "#/$defs/shotId" },
+        "line": { "$ref": "#/$defs/lineId" },
+        "kind": {
+          "type": "string",
+          "enum": ["voice", "lipsync", "layout_pass", "keyframe", "clip", "music", "sfx", "subtitle", "upscale", "render"]
+        },
+        "language": { "$ref": "#/$defs/language" },
+        "path": { "type": "string", "minLength": 1 },
+        "version": { "type": "integer", "minimum": 1 },
+        "checksum_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "tool": { "type": "string", "minLength": 1 },
+        "model": { "type": "string" },
+        "seed": { "type": "integer" },
+        "licence": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["generated", "qc_passed", "qc_failed", "approved", "rejected", "superseded"] }
+      }
+    },
+
+    "job": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "worker", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/jobId" },
+        "worker": {
+          "type": "string",
+          "enum": ["tts", "tts_hindi", "transcription", "lipsync", "layout_3d", "lora_training", "image_generation", "video_generation", "music", "upscaling", "assembly", "qc"]
+        },
+        "shot": { "$ref": "#/$defs/shotId" },
+        "language": { "$ref": "#/$defs/language" },
+        "runs_on": { "type": "string", "enum": ["laptop", "gridshare", "workspace"] },
+        "status": { "type": "string", "enum": ["QUEUED", "RUNNING", "GENERATED", "QC", "APPROVED", "FAILED", "REGENERATE"] },
+        "depends_on": { "type": "array", "items": { "$ref": "#/$defs/jobId" }, "default": [] },
+        "attempts": { "type": "integer", "minimum": 0, "default": 0 },
+        "error": { "type": "string" }
+      }
+    }
+  }
+}

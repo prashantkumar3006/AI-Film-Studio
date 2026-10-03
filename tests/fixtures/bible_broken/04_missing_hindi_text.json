@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "project": {
+    "id": "EP00",
+    "series": "Untitled series",
+    "title": "Last Cup (pipeline test scene)",
+    "canon": false,
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "primary_language": "en",
+    "audience": {
+      "made_for_kids": false,
+      "intended": "general audience"
+    },
+    "version": 1,
+    "status": "draft",
+    "checkpoints": {
+      "A_script": "pending",
+      "B_keyframes": "pending",
+      "C_final_cut": "pending"
+    },
+    "notes": "BROKEN ON PURPOSE: a line has no Hindi text although the project languages are en and hi"
+  },
+  "characters": [
+    {
+      "id": "CH_MIRA",
+      "name": {
+        "en": "Mira",
+        "hi": "मीरा"
+      },
+      "role": "Owner of a roadside chai stall; calm, watchful, knows more than she says",
+      "voices": {
+        "en": {
+          "engine": "kokoro",
+          "voice": "af_heart"
+        },
+        "hi": {
+          "engine": "pending_bakeoff",
+          "voice": null
+        }
+      },
+      "reference_sheet": null,
+      "lora": null
+    },
+    {
+      "id": "CH_KABIR",
+      "name": {
+        "en": "Kabir",
+        "hi": "कबीर"
+      },
+      "role": "Night-shift delivery rider in his twenties; tired, polite, unsettled",
+      "voices": {
+        "en": {
+          "engine": "kokoro",
+          "voice": "am_adam"
+        },
+        "hi": {
+          "engine": "pending_bakeoff",
+          "voice": null
+        }
+      },
+      "reference_sheet": null,
+      "lora": null
+    }
+  ],
+  "locations": [
+    {
+      "id": "LOC_CHAI_STALL",
+      "name": "Chai stall under a city flyover",
+      "description": "A small roadside stall lit by one bulb and a streetlight, rain falling past the flyover's edge, an old wall clock above the stove.",
+      "blend_file": null
+    }
+  ],
+  "scenes": [
+    {
+      "id": "EP00_SC01",
+      "title": "Last cup",
+      "location": "LOC_CHAI_STALL",
+      "time_of_day": "night, heavy rain",
+      "purpose": "Establish a grounded, ordinary world, then let one impossible detail in.",
+      "shots": [
+        {
+          "id": "EP00_SC01_SH001",
+          "duration_s": 6,
+          "description": "Rain pours past a city flyover; under it, one small chai stall is the only light.",
+          "camera": {
+            "size": "extreme_wide",
+            "movement": "slow push in"
+          },
+          "characters": [],
+          "lines": [],
+          "visual": {
+            "method": "keyframe_motion",
+            "prompt": "anime style, night, heavy rain, city flyover, small roadside chai stall glowing under it, wet road reflections, cinematic wide shot",
+            "guides": [
+              "depth",
+              "lineart"
+            ]
+          },
+          "audio": {
+            "ambience": "heavy rain, distant traffic"
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH002",
+          "duration_s": 7,
+          "description": "Mira wipes the counter and turns off the stove.",
+          "camera": {
+            "size": "medium",
+            "movement": "static"
+          },
+          "characters": [
+            "CH_MIRA"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH002_L01",
+              "character": "CH_MIRA",
+              "text": {
+                "en": "Last cup's gone. I'm closing.",
+                "hi": "आख़िरी कप जा चुका। मैं बंद कर रही हूँ।"
+              },
+              "delivery": "tired, kind"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, woman in her forties at a chai stall counter wiping it with a cloth, steel kettle, warm bulb light, rain behind",
+            "guides": [
+              "depth",
+              "lineart",
+              "pose"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH003",
+          "duration_s": 6,
+          "description": "A scooter pulls in, its headlight cutting through the rain. Kabir pulls off his helmet.",
+          "camera": {
+            "size": "wide",
+            "movement": "slight pan"
+          },
+          "characters": [
+            "CH_KABIR"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH003_L01",
+              "character": "CH_KABIR",
+              "text": {
+                "en": "One more. Please. It's been a long night.",
+                "hi": "बस एक और। प्लीज़। बहुत लंबी रात रही है।"
+              },
+              "delivery": "breathless, polite"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, young delivery rider on a scooter stopping beside a chai stall in heavy rain, headlight beam through rain, removing helmet",
+            "guides": [
+              "depth",
+              "lineart",
+              "pose"
+            ]
+          },
+          "audio": {
+            "sfx": [
+              "scooter engine idling, then off"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH004",
+          "duration_s": 7,
+          "description": "Mira studies him, sighs, and lights the stove again.",
+          "camera": {
+            "size": "medium_close",
+            "movement": "static"
+          },
+          "characters": [
+            "CH_MIRA",
+            "CH_KABIR"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH004_L01",
+              "character": "CH_MIRA",
+              "text": {
+                "en": "Sit. You look like you've seen a ghost."
+              },
+              "delivery": "dry, concerned"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, woman lighting a gas stove at a chai stall, blue flame, young man sitting on a bench in the foreground, rain",
+            "guides": [
+              "depth",
+              "lineart",
+              "pose"
+            ]
+          },
+          "audio": {
+            "sfx": [
+              "gas stove click and flame"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH005",
+          "duration_s": 6,
+          "description": "Close on Kabir's phone on the counter: the clock reads 11:58.",
+          "camera": {
+            "size": "insert",
+            "movement": "static"
+          },
+          "characters": [
+            "CH_KABIR"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH005_L01",
+              "character": "CH_KABIR",
+              "text": {
+                "en": "Not a ghost. Just my phone acting strange.",
+                "hi": "भूत नहीं। बस मेरा फ़ोन अजीब हरकत कर रहा है।"
+              },
+              "delivery": "trying to sound casual"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, close-up of a cracked smartphone on a wet wooden counter, lock screen clock shows 11:58, rain droplets",
+            "guides": [
+              "depth"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH006",
+          "duration_s": 8,
+          "description": "Mira glances up at the stall's old wall clock: 11:55.",
+          "camera": {
+            "size": "close",
+            "movement": "tilt up"
+          },
+          "characters": [
+            "CH_MIRA"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH006_L01",
+              "character": "CH_MIRA",
+              "text": {
+                "en": "Your phone is three minutes fast.",
+                "hi": "तुम्हारा फ़ोन तीन मिनट आगे चल रहा है।"
+              },
+              "delivery": "matter-of-fact"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, old round wall clock above a stove showing 11:55, steam rising, warm light, woman's face in the lower frame looking up",
+            "guides": [
+              "depth",
+              "lineart"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH007",
+          "duration_s": 7,
+          "description": "Kabir shakes his head slowly.",
+          "camera": {
+            "size": "close",
+            "movement": "static"
+          },
+          "characters": [
+            "CH_KABIR"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH007_L01",
+              "character": "CH_KABIR",
+              "text": {
+                "en": "It isn't fast. It's been right all week. Everything else is late.",
+                "hi": "आगे नहीं है। पूरे हफ़्ते सही चला है। बाक़ी सब देर से चल रहा है।"
+              },
+              "delivery": "quiet, certain"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, close-up of a young man with wet hair under a bulb, serious expression, rain blurred behind",
+            "guides": [
+              "depth",
+              "pose"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH008",
+          "duration_s": 8,
+          "description": "The streetlight flickers. For one beat the rain hangs still in the air, then falls again.",
+          "camera": {
+            "size": "wide",
+            "movement": "slow drift"
+          },
+          "characters": [
+            "CH_MIRA",
+            "CH_KABIR"
+          ],
+          "lines": [],
+          "visual": {
+            "method": "keyframe_motion",
+            "prompt": "anime style, streetlight flickering above a chai stall at night, raindrops frozen mid-air for a moment, two figures small in frame, eerie stillness",
+            "guides": [
+              "depth",
+              "lineart"
+            ]
+          },
+          "audio": {
+            "sfx": [
+              "electrical buzz",
+              "rain cuts out for one beat, then returns"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH009",
+          "duration_s": 7,
+          "description": "Mira sets a steaming cup in front of him, eyes on the rain.",
+          "camera": {
+            "size": "medium",
+            "movement": "static"
+          },
+          "characters": [
+            "CH_MIRA",
+            "CH_KABIR"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH009_L01",
+              "character": "CH_MIRA",
+              "text": {
+                "en": "Drink your tea, Kabir.",
+                "hi": "चाय पियो, कबीर।"
+              },
+              "delivery": "gentle, without looking at him"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, woman placing a small glass of steaming chai in front of a young man at a counter, she looks out at the rain, warm and cold light",
+            "guides": [
+              "depth",
+              "lineart",
+              "pose"
+            ]
+          },
+          "status": "planned"
+        },
+        {
+          "id": "EP00_SC01_SH010",
+          "duration_s": 8,
+          "description": "Kabir freezes, the cup halfway to his lips.",
+          "camera": {
+            "size": "close",
+            "movement": "slow push in"
+          },
+          "characters": [
+            "CH_KABIR"
+          ],
+          "lines": [
+            {
+              "id": "EP00_SC01_SH010_L01",
+              "character": "CH_KABIR",
+              "text": {
+                "en": "I never told you my name.",
+                "hi": "मैंने तो आपको अपना नाम कभी बताया ही नहीं।"
+              },
+              "delivery": "barely above a whisper"
+            }
+          ],
+          "visual": {
+            "method": "keyframe",
+            "prompt": "anime style, close-up of a young man frozen with a glass of chai halfway to his lips, wide eyes, steam, rain behind, tension",
+            "guides": [
+              "depth",
+              "pose"
+            ]
+          },
+          "audio": {
+            "music": "single low sustained note, cut to silence at the end"
+          },
+          "status": "planned"
+        }
+      ]
+    }
+  ],
+  "assets": [],
+  "jobs": []
+}

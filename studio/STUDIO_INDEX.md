@@ -71,7 +71,9 @@ MEDIA / OUTPUT
 
 Primary role:
 
-Master Studio Operating System.
+Short working guide for Claude (under 200 lines): current phase, where things are,
+commands and non-negotiable rules. Since October 2026 the full Master Studio Operating System
+described below lives in `studio/OPERATING_SYSTEM.md`.
 
 Defines:
 

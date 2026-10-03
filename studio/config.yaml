@@ -106,16 +106,37 @@ processing:
   dry_run: true
 
 # ------------------------------------------------------------
+# Compute split (docs/WORKPLAN.md, decisions of 3 October 2026)
+# ------------------------------------------------------------
+# Light jobs run on the laptop; heavy jobs on a rented GridShare
+# GPU, started and stopped per batch by `studio gpu up/down`
+# (workplan step 1.9). Credentials never go in this file.
+compute:
+  laptop: windows-cpu
+  gpu_provider: gridshare
+  default_gpu: RTX 4090 24GB
+  small_gpu: "₹12/hr tier"
+  stop_after_batch: true
+
+# ------------------------------------------------------------
 # Integration switches for THIS machine
 # ------------------------------------------------------------
 # Definitions live in integrations/registry.yaml.
 # An integration runs only if it is enabled BOTH here and in
-# the registry. Heavy AI integrations stay off by default.
+# the registry. Everything stays off until its adapter exists
+# and its workplan step's done-test passes.
 integrations:
+  tts: false
+  tts_hindi: false
+  transcription: false
+  lipsync: false
+  layout_3d: false
+  lora_training: false
+  image_generation: false
+  video_generation: false
+  music: false
+  upscaling: false
+  assembly: false
   stock: false
   maps: false
   vectors: false
-  tts: false
-  transcription: false
-  image_generation: false
-  video_generation: false
