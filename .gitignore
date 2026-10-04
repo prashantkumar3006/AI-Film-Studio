@@ -474,3 +474,18 @@ integrations/*/output/
 .studio-tmp/
 studio/**/.cache/
 studio/**/output/
+
+# ------------------------------------------------------------
+# Anime studio additions (keep at the end: later rules win)
+# ------------------------------------------------------------
+# The generic "blender/" and "render/" rules above would hide adapter code.
+!integrations/blender/
+!integrations/blender/**
+# Approved canon reference images (model sheets, location art) ARE versioned.
+!series/*/bible/refs/**/*.png
+!series/*/bible/refs/**/*.jpg
+!series/*/bible/refs/**/*.webp
+# Remotion build output
+integrations/motion_graphics/remotion/out/
+# Voice consent forms and contracts never go in git
+legal/consent/

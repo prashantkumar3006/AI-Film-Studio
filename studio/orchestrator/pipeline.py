@@ -67,15 +67,19 @@ STAGES: List[Stage] = [
     Stage("workflow", "Workflow", module="orchestrator"),
     Stage("project", "Project creation", module="orchestrator"),
     Stage("asset_acquisition", "Asset acquisition",
-          ("stock", "maps", "vectors", "image_generation", "video_generation"),
-          module="asset_manager"),
-    Stage("asset_processing", "Asset processing", module="asset_manager"),
-    Stage("audio", "Audio", ("tts", "transcription"), module="audio"),
-    Stage("animation", "Animation", module="video"),
-    Stage("rendering", "Rendering", module="render"),
-    Stage("qc", "QC", module="qc"),
-    Stage("final_output", "Final output", module="render"),
+          ("stock", "maps", "vectors", "blender", "comfyui"),
+          module="integrations"),
+    Stage("asset_processing", "Asset processing", ("post_realesrgan", "post_rife"), module="integrations"),
+    Stage("audio", "Audio",
+          ("tts_kokoro", "tts_indic_parler", "stt_faster_whisper", "music_ace_step"),
+          module="integrations"),
+    Stage("animation", "Animation", ("lipsync_rhubarb", "motion_remotion"), module="integrations"),
+    Stage("rendering", "Rendering", ("edit_ffmpeg",), module="integrations.edit"),
+    Stage("qc", "QC", ("identity_ccip",), module="studio.feedback"),
+    Stage("final_output", "Final output", ("edit_ffmpeg",), module="integrations.edit"),
 ]
+# The anime episode pipeline (with legal, budget and feedback gates)
+# lives in studio/orchestrator/anime.py: python -m studio pipeline plan
 
 
 # ------------------------------------------------------------
@@ -202,7 +206,7 @@ def run_stages(integrations: Dict[str, Dict[str, Any]],
     print("\nPipeline stages")
     print("-" * 60)
     for n, stage in enumerate(STAGES, 1):
-        owner = f"  [studio/{stage.module}]" if stage.module else ""
+        owner = f"  [{stage.module if '.' in stage.module or stage.module == 'integrations' else 'studio/' + stage.module}]" if stage.module else ""
         print(f"{n:>2}. {stage.title}{owner}")
         for key in stage.integrations:
             entry = integrations.get(key)

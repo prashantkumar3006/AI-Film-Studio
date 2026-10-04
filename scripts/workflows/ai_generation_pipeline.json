@@ -1,8 +1,8 @@
 {
   "id": "WF_AI_GENERATION_PIPELINE",
   "name": "AI Generation Pipeline",
-  "version": "v001",
-  "description": "Controlled AI image/video generation workflow with preflight validation, generation, registration, and QC handoff.",
+  "version": "v002",
+  "description": "Controlled AI image/video generation: preflight audit, input validation, generation (the adapter registers outputs in project state), manifest, then automated QC through the studio feedback loop. Set SHOT_ID, PROMPT_ID and MODEL_ID as environment variables.",
   "risk_level": "MEDIUM",
   "approval_required": true,
   "variables": {
@@ -43,26 +43,6 @@
       "args": [
         "python",
         "{{REPO_ROOT}}/scripts/adapters/ai_generate.py",
-        "--project-id",
-        "{{PROJECT_ID}}",
-        "--project-slug",
-        "{{PROJECT_SLUG}}",
-        "--shot-id",
-        "{{SHOT_ID}}",
-        "--prompt-id",
-        "{{PROMPT_ID}}",
-        "--model-id",
-        "{{MODEL_ID}}",
-        "--output",
-        "{{OUTPUT_PATH}}"
-      ]
-    },
-    {
-      "name": "register_generation_outputs",
-      "type": "command",
-      "args": [
-        "python",
-        "{{REPO_ROOT}}/scripts/adapters/register_generation.py",
         "--project-id",
         "{{PROJECT_ID}}",
         "--project-slug",

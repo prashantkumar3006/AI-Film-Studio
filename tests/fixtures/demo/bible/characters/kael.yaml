@@ -1,0 +1,17 @@
+id: kael
+name: Kael
+role: rival
+status: draft
+appearance:
+  hair: long black
+palette:
+  hair: "#15151C"
+  outfit_primary: "#8C2F3D"
+outfits:
+  default:
+    prompt: "red long coat"
+voice:
+  en: {engine: tts_kokoro, voice: am_michael}
+  hi: {engine: tts_indic_parler, speaker: Aman}
+references:
+  model_sheet: refs/kael/model_sheet_v001.png

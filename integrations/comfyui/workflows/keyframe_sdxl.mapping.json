@@ -1,0 +1,25 @@
+{
+  "description": "Text-to-image keyframe on an SDXL-family anime checkpoint with one character LoRA. Starting point only: add ControlNet (layout from Blender) and IP-Adapter / reference nodes in ComfyUI, re-export, and update node numbers here.",
+  "tools": ["comfyui"],
+  "models": ["animagine_xl_4"],
+  "required": ["prompt", "seed"],
+  "optional_nodes": {
+    "10": {"when_missing": "lora_file", "passthrough": {"0": ["4", 0], "1": ["4", 1]}}
+  },
+  "inputs": {
+    "prompt": [{"node": "6", "input": "text"}],
+    "negative": [{"node": "7", "input": "text"}],
+    "seed": [{"node": "3", "input": "seed", "transform": "int"}],
+    "steps": [{"node": "3", "input": "steps", "transform": "int"}],
+    "cfg": [{"node": "3", "input": "cfg", "transform": "float"}],
+    "width": [{"node": "5", "input": "width", "transform": "int"}],
+    "height": [{"node": "5", "input": "height", "transform": "int"}],
+    "checkpoint": [{"node": "4", "input": "ckpt_name"}],
+    "lora_file": [{"node": "10", "input": "lora_name"}],
+    "lora_weight": [
+      {"node": "10", "input": "strength_model", "transform": "float"},
+      {"node": "10", "input": "strength_clip", "transform": "float"}
+    ],
+    "filename_prefix": [{"node": "9", "input": "filename_prefix"}]
+  }
+}

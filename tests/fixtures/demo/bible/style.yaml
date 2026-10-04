@@ -1,0 +1,8 @@
+look:
+  medium: 2D anime, cel shaded
+palette:
+  ink: "#1B1D2A"
+  night_sky: "#0B1430"
+prompting:
+  prefix: "masterpiece, anime screencap style, cel shading"
+  negative: "lowres, bad hands, text, watermark"

@@ -1,0 +1,29 @@
+id: aria
+name: Aria
+role: protagonist
+status: approved
+appearance:
+  hair: short silver bob
+  eyes: amber
+palette:
+  hair: "#C8CCD8"
+  eyes: "#E3A13B"
+  outfit_primary: "#3D6E8C"
+outfits:
+  default:
+    prompt: "navy coat with brass buttons"
+  winter:
+    prompt: "navy coat, grey scarf"
+voice:
+  en: {engine: tts_kokoro, voice: af_heart, speed: 1.0}
+  hi: {engine: tts_indic_parler, speaker: Divya, description: "Divya speaks in a bright voice."}
+lora:
+  file: aria_v001.safetensors
+  trigger: ar1a
+  weight: 0.8
+  base_model: animagine_xl_4
+  training_data: "40 images from our approved model sheet v001"
+  training_data_cleared: true
+references:
+  model_sheet: refs/aria/model_sheet_v001.png
+identity_threshold: 0.8

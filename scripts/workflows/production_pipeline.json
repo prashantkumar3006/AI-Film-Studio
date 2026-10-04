@@ -413,7 +413,7 @@
         "--phase",
         "TECHNICAL POST",
         "--depends-on",
-        "TASK_016,TASK_017,TASK_018,TASK_019,TASK_020",
+        "TASK_016,TASK_017",
         "--description",
         "Validate codecs, resolution, frame rate, color management, audio specifications, file integrity, project references, and final technical readiness."
       ]
@@ -436,7 +436,7 @@
         "--phase",
         "QC",
         "--depends-on",
-        "TASK_020,TASK_021",
+        "TASK_018",
         "--description",
         "Perform creative, technical, factual where applicable, continuity, audio, color, VFX, AI, subtitle, accessibility, and delivery QC."
       ]
@@ -459,7 +459,7 @@
         "--phase",
         "LEGAL / RIGHTS",
         "--depends-on",
-        "TASK_022",
+        "TASK_019",
         "--description",
         "Verify required rights, licenses, releases, permissions, music clearance, archival material, AI usage terms, and third-party content status."
       ]
@@ -482,7 +482,7 @@
         "--phase",
         "DELIVERY",
         "--depends-on",
-        "TASK_022,TASK_023",
+        "TASK_019,TASK_020",
         "--description",
         "Create approved platform-specific deliverables, validate specifications, metadata, subtitles, captions, credits, and delivery packaging."
       ]
@@ -505,7 +505,7 @@
         "--phase",
         "ARCHIVE",
         "--depends-on",
-        "TASK_024",
+        "TASK_021",
         "--description",
         "Preserve final masters, project files, source manifests, prompts, AI generation logs, research, rights, QC, technical information, delivery records, and production knowledge."
       ]

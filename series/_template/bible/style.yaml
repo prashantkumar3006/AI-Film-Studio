@@ -1,0 +1,33 @@
+# Art direction: the look every shot is judged against.
+# Owned by production-design (art direction) + color. Change through
+# change control: a style change invalidates approved keyframes.
+
+look:
+  medium: 2D anime, cel shaded, clean line art, painterly backgrounds
+  line: thin consistent dark lines, slightly thicker silhouette line
+  shading: two-tone cel shadow, soft rim light on night scenes
+  backgrounds: painted, atmospheric perspective, high detail far, simpler near
+  references_note: describe qualities in words; never name a studio, show or artist in prompts
+
+palette:
+  ink: "#1B1D2A"
+  night_sky: "#0B1430"
+  glow_accent: "#7FE3FF"
+  warm_light: "#F2B65A"
+  skin_shadow: "#C98F7A"
+
+camera_language:
+  default_lens: 35mm equivalent
+  favour: low angles for power, wide shots to establish scale, close-ups for decisions
+  avoid: constant camera motion; anime holds and lets drawings breathe
+
+prompting:
+  # Prefix/suffix added to every keyframe prompt for the active checkpoint.
+  prefix: "masterpiece, high quality, anime screencap style, clean line art, cel shading"
+  negative: "lowres, bad anatomy, bad hands, extra fingers, text, watermark, signature, logo, blurry, jpeg artifacts, 3d render, photorealistic"
+  forbidden_terms: []        # words never allowed in prompts for this series
+
+motion:
+  animate_on: 2              # character animation on twos at 24 fps
+  impact_frames: true        # 1-3 frame high-contrast flashes on hits
+  smear_frames: true

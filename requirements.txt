@@ -1,0 +1,2 @@
+# Core studio (laptop). Everything else is optional.
+pyyaml>=6.0

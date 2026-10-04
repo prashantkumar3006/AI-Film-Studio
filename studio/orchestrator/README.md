@@ -1,5 +1,9 @@
 # Orchestrator
 
+> The **anime episode pipeline** (23 stages with legal, budget and QC gates)
+> is `anime.py`: `python -m studio pipeline plan`. This file describes the
+> general workflow planner used for any project type.
+
 Coordinates a production run. It is currently a **skeleton**: it plans,
 validates and creates directories, but does not generate or render media.
 
@@ -23,13 +27,13 @@ Input
 | 1 | Input | — | — |
 | 2 | Workflow | `orchestrator` | — |
 | 3 | Project creation | `orchestrator` | — |
-| 4 | Asset acquisition | `asset_manager` | stock, maps, vectors, image_generation, video_generation |
-| 5 | Asset processing | `asset_manager` | — |
-| 6 | Audio | `audio` | tts, transcription |
-| 7 | Animation | `video` | — |
-| 8 | Rendering | `render` | — |
-| 9 | QC | `qc` | — |
-| 10 | Final output | `render` | — |
+| 4 | Asset acquisition | `integrations` | stock, maps, vectors, blender, comfyui |
+| 5 | Asset processing | `integrations` | post_realesrgan, post_rife |
+| 6 | Audio | `integrations` | tts_kokoro, tts_indic_parler, stt_faster_whisper, music_ace_step |
+| 7 | Animation | `integrations` | lipsync_rhubarb, motion_remotion |
+| 8 | Rendering | `integrations.edit` | edit_ffmpeg |
+| 9 | QC | `studio.feedback` | identity_ccip |
+| 10 | Final output | `integrations.edit` | edit_ffmpeg |
 
 The stage list lives in `STAGES` in `pipeline.py`.
 

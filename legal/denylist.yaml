@@ -1,0 +1,77 @@
+# Terms that must not appear in scripts, prompts or dialogue.
+# A tripwire for obvious mistakes, not a complete list. Add terms as you
+# find them. Matching is case-insensitive, whole words.
+#
+# block  -> pipeline stops (franchises, characters, real people)
+# review -> needs a recorded human decision (brands, style names)
+
+franchises:
+  - Naruto
+  - One Piece
+  - Dragon Ball
+  - Demon Slayer
+  - Kimetsu no Yaiba
+  - Jujutsu Kaisen
+  - Attack on Titan
+  - Shingeki no Kyojin
+  - My Hero Academia
+  - Pokemon
+  - Pokémon
+  - Bleach
+  - Death Note
+  - Fullmetal Alchemist
+  - Evangelion
+  - Gundam
+  - Sailor Moon
+  - Doraemon
+  - Shin-chan
+  - Chhota Bheem
+  - Motu Patlu
+  - Spider-Man
+  - Batman
+  - Superman
+  - Avengers
+  - Star Wars
+  - Harry Potter
+
+characters:
+  - Goku
+  - Vegeta
+  - Luffy
+  - Pikachu
+  - Tanjiro
+  - Gojo
+  - Levi Ackerman
+  - Eren Yeager
+  - Sasuke
+  - Kakashi
+  - Totoro
+  - Mickey Mouse
+
+real_people:
+  # Add any real person whose name, face or voice must not be used.
+  - Shah Rukh Khan
+  - Amitabh Bachchan
+  - Salman Khan
+  - Narendra Modi
+
+brands:
+  - Coca-Cola
+  - Nike
+  - Apple iPhone
+  - Tata
+  - Reliance
+
+styles:
+  # Style imitation of a named studio or artist: legally grey and against
+  # most platforms' spirit. Describe qualities instead ("soft watercolour
+  # backgrounds, warm light").
+  - Studio Ghibli
+  - Ghibli
+  - Makoto Shinkai
+  - Hayao Miyazaki
+  - Kyoto Animation
+  - Ufotable
+  - MAPPA
+  - Toei
+  - Akira Toriyama

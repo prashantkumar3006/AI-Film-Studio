@@ -1,0 +1,31 @@
+# Series identity and production format. One file per series.
+slug: _template
+title: Series Title
+logline: "One sentence - who wants what, what stands in the way, why it matters."
+genre: [fantasy, sci-fi, supernatural]
+tone: grounded first, wonder grows episode by episode
+audience: general (13+), not made for kids
+languages: [en, hi]          # first language is the primary edit
+primary_language: en
+
+format:
+  episode_minutes: 20
+  fps: 24
+  resolution: 1920x1080
+  aspect: "16:9"
+
+# Cost and quality lever: share of runtime allowed as full AI video.
+# Everything else is held frames, camera moves and limited animation.
+animation_policy:
+  max_full_video_ratio: 0.3
+  mouth_on: 2                # mouth drawings change at most every 2 frames
+
+# Optional narrator voice per language (used when dialogue character is "narrator").
+narrator:
+  voice:
+    en: {engine: tts_kokoro, voice: bm_george, speed: 0.95}
+    hi: {engine: tts_indic_parler, speaker: Rohit, description: "Rohit speaks in a calm, deep, storytelling voice. Very clear, close-sounding recording."}
+
+legal:
+  copyright_holder: null     # your name or company, used in credits and metadata
+  original_ip: true          # characters, world and story are original to this studio
