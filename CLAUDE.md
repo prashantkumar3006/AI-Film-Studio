@@ -3,6 +3,93 @@
 
 ---
 
+# 0. THIS REPOSITORY — START HERE
+
+This studio is general (any film or video project), and its first
+production is an **original anime series in English and Hindi** for the
+owner's YouTube channel, built with Claude, Blender (+ Blender MCP),
+ComfyUI on rented GridShare GPUs, FFmpeg and Remotion.
+
+Owner constraints: CPU-only laptop, ~10 hours/week, **₹5,000 GPU budget per
+episode**, maximum automation, world-class consistency, and strict legal
+safety for commercial use.
+
+## 0.1 Always begin from the real state
+
+    python -m studio pipeline status <series> <episode>
+    python -m studio qc <series> <episode> queue
+    python -m studio budget <series> <episode> report
+    python -m studio compute status <series> <episode>
+
+Then follow `skill:studio-manager`. Never report progress from memory.
+
+## 0.2 Where things live
+
+| Path | What |
+|---|---|
+| `.claude/skills/<name>/SKILL.md` | Department skills (load the owner's skill before acting) |
+| `series/<slug>/` | Canon: bible, scripts, shot lists (text, versioned) |
+| `projects/<ID>/<slug>/` | Engine projects: heavy media, QC, ledger (git-ignored) |
+| `studio/` | Python: series, legal, budget, feedback, compute, CLI, orchestrator |
+| `integrations/` | Adapters: comfyui, blender, tts, stt, lipsync, music, motion_graphics, edit, identity |
+| `integrations/registry.yaml` | Every tool and model with its **license state** |
+| `studio/config.yaml` | Render, budget, legal mode, feedback thresholds, tool commands |
+| `docs/` | SETUP, PIPELINE, STACK, FEEDBACK, BUDGET, LEGAL |
+
+## 0.3 Hard rules (never bypass)
+
+1. **License gate before GPU time.** Only registry entries that are
+   cleared may be used (`python -m studio legal check`). Unknown = blocked.
+2. **Provenance on every generated file** (`<file>.prov.json`). Adapters
+   write it; never create media outside an adapter for a release.
+3. **No existing IP, no real people, no studio-style names** in prompts,
+   scripts or references (`python -m studio legal scan`).
+4. **Gates block:** `shots check`, `legal scan`, `estimate` (cap),
+   QC review queue, `legal release-gate`. Fix the cause; never override.
+5. **Budget:** batch GPU work into sessions; `compute start/stop`; remind
+   the owner to stop the GridShare instance. Raising the cap is the
+   owner's decision only.
+6. **Feedback loop:** skipped checks are not passes. Assets the loop
+   cannot approve go to the owner, with a short reason.
+7. **Secrets** only in `.env` (git-ignored). Never in code, config or commits.
+
+## 0.4 Anime routing (in addition to §7)
+
+| Task | Skills |
+|---|---|
+| Run the studio, "next", status | `skill:studio-manager` |
+| Script | `skill:writer` |
+| Direction, scene intent | `skill:director`, `skill:anime-direction` |
+| Fights, chases, set pieces | `skill:action-direction` |
+| Art direction, world, characters, LoRAs | `skill:production-design`, `skill:series-bible` |
+| Shot list | `skill:shot-compiler`, `skill:continuity` |
+| Prompts, keyframes, video | `skill:anime-prompting`, `skill:ai-generation`, `skill:animation` |
+| Hindi | `skill:localization-hindi` |
+| Voices, mix | `skill:sound`, `skill:casting-talent` |
+| Lip sync, acting | `skill:performance` |
+| Music direction | `skill:music` |
+| Titles, motion graphics | `skill:vfx-motion` |
+| Edit | `skill:editor` |
+| Quality, ratings, lessons | `skill:qc`, `skill:feedback-loop` |
+| GPU money | `skill:compute-budget`, `skill:producer` |
+| Legal | `skill:legal-rights` (+ `docs/LEGAL.md`) |
+| Upload, YouTube | `skill:distribution`, `skill:marketing-promotion` |
+
+## 0.5 Changing the studio (it is meant to change)
+
+- New tool or model: add a registry entry with its license block, verify
+  the license (`legal verify`), write an adapter in `integrations/<type>/`,
+  add tests. Core code never imports external projects directly.
+- New ComfyUI workflow: `.api.json` + `.mapping.json` in
+  `integrations/comfyui/workflows/` (the mapping is validated on load).
+- New check: add a function to `CHECKS` in `studio/feedback/checks.py` and
+  list it under `feedback.required_checks` for the asset kinds it applies to.
+- Thresholds, budget, fps, languages: config and series files, not code.
+- Every change: `python -m unittest discover -s tests` must pass; commit
+  on a branch and open a pull request.
+
+---
+
 # 1. IDENTITY
 
 You are the central intelligence and orchestration system of the AI Film Studio.
@@ -123,9 +210,9 @@ The studio consists of the following departments.
 
 - Studio Knowledge & Archive
 
-Each department has a dedicated skill file under:
+Each department has a dedicated skill under:
 
-    studio/
+    .claude/skills/
 
 The central operating system must use those department skills as specialized instructions.
 
@@ -133,61 +220,23 @@ The central operating system must use those department skills as specialized ins
 
 # 5. DEPARTMENT FILES
 
-Expected structure:
+Each department is a Claude skill with frontmatter (`name`, `description`)
+so Claude Code discovers it automatically:
 
-    studio/
-        director/
-            SKILL.md
-        producer/
-            SKILL.md
-        writer/
-            SKILL.md
-        cinematography/
-            SKILL.md
-        editor/
-            SKILL.md
-        sound/
-            SKILL.md
-        vfx-motion/
-            SKILL.md
-        color/
-            SKILL.md
-        research/
-            SKILL.md
-        qc/
-            SKILL.md
-        workflow/
-            SKILL.md
-        production-design/
-            SKILL.md
-        continuity/
-            SKILL.md
-        legal-rights/
-            SKILL.md
-        distribution/
-            SKILL.md
-        marketing-promotion/
-            SKILL.md
-        performance/
-            SKILL.md
-        music/
-            SKILL.md
-        casting-talent/
-            SKILL.md
-        production-management/
-            SKILL.md
-        asset-pipeline/
-            SKILL.md
-        animation/
-            SKILL.md
-        technical-post/
-            SKILL.md
-        knowledge-archive/
-            SKILL.md
-        storyboard-previs/
-            SKILL.md
-        ai-generation/
-            SKILL.md
+    .claude/skills/
+        director/  producer/  writer/  cinematography/  editor/  sound/
+        vfx-motion/  color/  research/  qc/  workflow/  production-design/
+        continuity/  legal-rights/  distribution/  marketing-promotion/
+        performance/  music/  casting-talent/  production-management/
+        asset-pipeline/  animation/  technical-post/  knowledge-archive/
+        storyboard-previs/  ai-generation/  project-template/
+        # anime studio additions
+        studio-manager/  anime-direction/  action-direction/  shot-compiler/
+        series-bible/  anime-prompting/  localization-hindi/
+        feedback-loop/  compute-budget/
+
+General studio operating documents (command center, data schema, prompt
+system, tool registry, automation, media storage) are in `docs/system/`.
 
 ---
 
@@ -936,7 +985,7 @@ Every major character receives:
 
 Canonical location:
 
-    characters/
+    series/<slug>/bible/characters/<id>.yaml   (approved refs in bible/refs/)
 
 The Character & Performance Department owns performance interpretation.
 

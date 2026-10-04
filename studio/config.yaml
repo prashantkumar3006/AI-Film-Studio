@@ -1,121 +1,231 @@
 # ============================================================
-# AI FILM STUDIO - MODULAR STUDIO CONFIGURATION
+# AI FILM STUDIO - STUDIO CONFIGURATION
 # ============================================================
 #
-# Lightweight-machine-first defaults.
+# Laptop-first: everything that can run on a CPU does; heavy
+# generation runs on a rented GridShare GPU over SSH.
 #
-# - Everything here must run on a laptop with no GPU.
-# - Heavy AI integrations are DISABLED by default.
-# - Paths are relative to the repository root unless noted.
-# - Asset / render paths are relative to a PROJECT root and
-#   deliberately live inside the numbered folders created by
-#   scripts/create_project.py, so both systems share one layout.
-#
-# This file is parsed by studio/orchestrator/config.py, which
-# uses PyYAML when installed and a small built-in parser
-# otherwise. Keep to simple YAML: nested mappings, scalars,
-# and inline lists [a, b].
+# Parsed by studio/orchestrator/config.py (PyYAML when installed,
+# a built-in parser otherwise). Keep to simple YAML: nested
+# mappings, scalars, inline lists [a, b] and "- item" lists.
+# Secrets NEVER go here: use .env (see .env.example).
 # ============================================================
 
 studio:
-  version: 0.1.0
+  version: 0.2.0
   machine_profile: lightweight
+  default_series: null
 
 # ------------------------------------------------------------
-# Projects
+# Projects (engine layout: projects/<PROJECT_ID>/<slug>/)
 # ------------------------------------------------------------
-# Same root the existing engine uses:
-#   projects/<PROJECT_ID>/<project-slug>/
 projects:
   root: projects
-  # Used when no --project-id is given. Kept outside the
-  # engine's PROJECT_<YEAR>_<NNN> numbering so it never collides
-  # with `create_project.py init`.
   default_project_id: STUDIO_DRAFT
-  # SMALL | STANDARD | FULL  (same meaning as create_project.py)
-  default_complexity: SMALL
+  default_complexity: FULL
 
 # ------------------------------------------------------------
-# Asset directories (relative to the project root)
+# Asset directories (relative to a project root)
 # ------------------------------------------------------------
 assets:
   stock: 01_research/references/stock
   maps: 05_production-design/maps
   vectors: 05_production-design/vectors
+  layout: 07_storyboard-previs/layout
+  keyframes: 09_ai-generation/keyframes
+  mouth_shapes: 09_ai-generation/mouth_shapes
   images: 09_ai-generation/selected
-  video_clips: 12_edit/selects
+  video_clips: 10_animation/clips
+  shots: 12_edit/shots
   voice: 14_sound/dialogue
   sfx: 14_sound/sfx
+  mix: 14_sound/mix
   music: 15_music/cues
+  motion_graphics: 13_vfx-motion/titles
   subtitles: 21_distribution/subtitles
   temp: 00_admin/temp
 
 # ------------------------------------------------------------
-# Rendering
+# Rendering (anime: 24 fps, animated on twos and threes)
 # ------------------------------------------------------------
 render:
-  # relative to the project root (ignored by .gitignore)
   output_dir: 18_technical/renders
   preview_dir: 18_technical/previews
   resolution: 1920x1080
-  fps: 30
-  # Draft renders at reduced size to stay fast on weak machines.
+  fps: 24
   preview_resolution: 1280x720
   video_codec: h264
   pixel_format: yuv420p
-  # Lower CRF = higher quality / bigger files.
-  crf: 20
-  # Faster presets trade file size for speed on weak CPUs.
-  preset: veryfast
+  crf: 18
+  preset: medium
   container: mp4
   hardware_acceleration: false
 
-# ------------------------------------------------------------
-# Audio
-# ------------------------------------------------------------
 audio:
   sample_rate: 48000
   channels: 2
   bit_depth: 24
   delivery_codec: aac
   delivery_bitrate: 192k
-  # Integrated loudness target for online delivery.
   loudness_target_lufs: -14
   true_peak_dbtp: -1.0
 
-# ------------------------------------------------------------
-# Subtitles
-# ------------------------------------------------------------
 subtitles:
   format: srt
   max_chars_per_line: 42
   max_lines: 2
 
 # ------------------------------------------------------------
-# Processing preference
+# Processing
 # ------------------------------------------------------------
 processing:
-  # local | external | hybrid
-  preference: local
-  # Never send assets to a remote service unless this is true.
+  preference: hybrid
   allow_external: false
   require_gpu: false
   max_parallel_jobs: 1
-  # Pipeline plans and prints; it does not execute adapters
-  # unless explicitly told to.
   dry_run: true
 
 # ------------------------------------------------------------
-# Integration switches for THIS machine
+# Legal (see docs/LEGAL.md)
 # ------------------------------------------------------------
-# Definitions live in integrations/registry.yaml.
-# An integration runs only if it is enabled BOTH here and in
-# the registry. Heavy AI integrations stay off by default.
+legal:
+  # strict: refuse to spend GPU time on tools/models that are not
+  #         cleared for commercial use (recommended, default)
+  # exploration: warn only - for private tests that will NEVER ship
+  mode: strict
+  # Declare synthetic content on upload (India IT Rules 2026 SGI
+  # declaration; YouTube altered/synthetic disclosure). Keep true.
+  declare_synthetic_content: true
+  copyright_holder: null
+  denylist: legal/denylist.yaml
+
+# ------------------------------------------------------------
+# Budget (INR). GridShare prices are ex-GST, as listed on
+# gridshare.in on 2026-10-04 - re-check, they change.
+# ------------------------------------------------------------
+budget:
+  currency: INR
+  per_episode_cap: 5000
+  gst_rate: 0.18
+  safety_margin: 0.15
+  default_gpu: rtx_4090
+  gpu_rates_ex_gst:
+    rtx_3090: 30
+    rtx_4080: 42
+    rtx_4090: 48
+    rtx_5090: 51
+  sessions_per_episode: 4
+  session_overhead_min: 20
+  retry_factor_video: 2.5
+  retry_factor_image: 1.5
+  # GPU seconds per unit on default_gpu. ASSUMPTIONS until replaced
+  # with measured medians from: python -m studio budget calibrate
+  benchmarks_gpu_s:
+    keyframe_image: 20
+    keyframe_candidates: 4
+    keyframe_edit: 60
+    keyframe_edit_fraction: 0.5
+    video_5s_720p: 540
+    mouth_variant: 30
+    mouth_shapes: 6
+    tts_line: 4
+    stt_minute: 30
+    music_minute: 60
+    music_fraction: 0.6
+    upscale_interp_minute: 240
+    identity_check_image: 1
+    lora_training: 2700
+
+# ------------------------------------------------------------
+# Feedback system (see docs/FEEDBACK.md)
+# ------------------------------------------------------------
+feedback:
+  auto_approve: true
+  max_attempts:
+    keyframe: 4
+    video: 3
+    voice_line: 3
+    music: 2
+    master: 1
+  thresholds:
+    identity_min_similarity: 0.82
+    palette_min_match: 0.6
+    palette_max_distance: 48
+    flicker_max_spike_ratio: 6.0
+    black_min_seconds: 0.5
+    duration_tolerance_s: 0.1
+    loudness_tolerance_lu: 1.0
+    voice_max_peak_dbtp: -0.5
+    min_image_height: 1024
+    allowed_intermediate_resolutions: [1280x720, 1344x768, 1216x832]
+    dialogue_max_error:
+      en: 0.15
+      hi: 0.25
+
+# ------------------------------------------------------------
+# Animation policy (cost and quality lever)
+# ------------------------------------------------------------
+animation:
+  # Share of runtime allowed as full AI video. The rest is held
+  # frames, camera moves and limited (mouth / loop) animation -
+  # the way TV anime is actually made.
+  max_full_video_ratio: 0.3
+  mouth_on: 2
+
+# ------------------------------------------------------------
+# ComfyUI on GridShare (reach it via: python -m studio compute tunnel)
+# ------------------------------------------------------------
+comfyui:
+  url: http://127.0.0.1:8188
+  workflows:
+    keyframe: keyframe_sdxl
+    video: null
+    mouth_shapes: null
+
+# ------------------------------------------------------------
+# Tool command templates. {placeholders} are shell-quoted.
+# where: local (this machine) | gridshare (over SSH)
+# ------------------------------------------------------------
+tools:
+  tts_kokoro:
+    where: local
+    command: "python integrations/tts/runners/kokoro_tts.py --text {text} --voice {voice} --speed {speed} --out {out}"
+  tts_indic_parler:
+    where: gridshare
+    command: "python integrations/tts/runners/indic_parler_tts.py --text {text} --speaker {speaker} --description {description} --seed {seed} --out {out}"
+  stt_faster_whisper:
+    where: local
+    model: small
+  music_ace_step:
+    where: gridshare
+    command: null
+  blender:
+    binary: blender
+
+# ------------------------------------------------------------
+# Machine switches. An integration runs only if enabled BOTH
+# here and in integrations/registry.yaml (and cleared legally).
+# ------------------------------------------------------------
 integrations:
+  comfyui: false
+  lora_trainer_kohya: false
+  blender: true
+  blender_mcp: false
+  tts_kokoro: true
+  tts_indic_parler: false
+  tts_f5: false
+  tts_xtts_v2: false
+  stt_faster_whisper: true
+  lipsync_rhubarb: true
+  music_ace_step: false
+  music_musicgen: false
+  motion_remotion: true
+  edit_ffmpeg: true
+  edit_opentimelineio: false
+  post_rife: false
+  post_realesrgan: false
+  identity_ccip: true
+  compute_gridshare: false
   stock: false
   maps: false
   vectors: false
-  tts: false
-  transcription: false
-  image_generation: false
-  video_generation: false

@@ -1,0 +1,32 @@
+{
+  "series": "_template",
+  "episode": 0,
+  "version": "v001",
+  "fps": 24,
+  "target_minutes": 20,
+  "scenes": [
+    {
+      "id": "SC01",
+      "location": "example_place",
+      "time_of_day": "night",
+      "summary": "What happens and what changes.",
+      "shots": [
+        {
+          "id": "SC01_SH001",
+          "duration_s": 4.0,
+          "purpose": "Establish the place and mood.",
+          "motion": "camera",
+          "camera": {"framing": "WS", "angle": "low", "move": "pan_right", "lens_mm": 24},
+          "characters": [],
+          "action": "",
+          "visual_prompt": "",
+          "negative_prompt": "",
+          "dialogue": [],
+          "sfx": [],
+          "music_cue": null,
+          "notes": ""
+        }
+      ]
+    }
+  ]
+}

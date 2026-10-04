@@ -1,0 +1,22 @@
+slug: demo
+title: The Lantern Keepers
+logline: A girl who can hear dying stars must keep the city's last lantern lit.
+genre: [fantasy, sci-fi, supernatural]
+audience: general (13+)
+languages: [en, hi]
+primary_language: en
+format:
+  episode_minutes: 1
+  fps: 24
+  resolution: 1920x1080
+  aspect: "16:9"
+animation_policy:
+  max_full_video_ratio: 0.3
+  mouth_on: 2
+narrator:
+  voice:
+    en: {engine: tts_kokoro, voice: bm_george, speed: 0.95}
+    hi: {engine: tts_indic_parler, speaker: Rohit, description: "Rohit speaks in a calm, deep voice."}
+legal:
+  copyright_holder: Demo Studio
+  original_ip: true

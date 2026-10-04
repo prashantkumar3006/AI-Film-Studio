@@ -1,0 +1,6 @@
+id: rooftop
+name: Lantern Rooftop
+description: The flat roof of the old observatory where the last lantern hangs.
+palette:
+  base: "#2E3A4F"
+  light: "#F2B65A"

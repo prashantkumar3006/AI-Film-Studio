@@ -1,0 +1,67 @@
+# Copy to <id>.yaml (lowercase id, e.g. aria.yaml). Files starting
+# with "_" are templates and are ignored by the studio.
+id: example_hero
+name: Example Hero
+names:
+  hi: उदाहरण
+role: protagonist
+status: draft                # draft -> review -> approved (only approved goes to production)
+age: 17
+summary: One line on who they are and what they want.
+
+appearance:
+  height_cm: 165
+  build: slim, athletic
+  hair: shoulder-length, straight, side fringe covering left eyebrow
+  eyes: large, almond, amber iris with a darker ring
+  face: small chin, soft cheeks, small scar under right eye
+  distinguishing: [scar under right eye, silver ear cuff on left ear]
+
+# Exact colours. The palette check compares generated frames to these.
+palette:
+  hair: "#2B2F4A"
+  eyes: "#E3A13B"
+  skin: "#F1C9B0"
+  outfit_primary: "#3D6E8C"
+  outfit_accent: "#E8B04B"
+
+outfits:
+  default:
+    description: navy high-collar jacket with gold piping, dark trousers, worn boots
+    prompt: "navy high-collar jacket, gold piping, dark trousers, brown boots"
+  winter:
+    description: default plus grey scarf and fingerless gloves
+    prompt: "navy high-collar jacket, gold piping, grey scarf, fingerless gloves"
+
+expressions: [neutral, determined, angry, afraid, laughing, sad, surprised]
+
+personality:
+  want: what they chase
+  need: what they actually need
+  flaw: what gets in the way
+  voice_notes: short sentences, dry humour, never swears
+
+# One voice per language. Engines must be cleared in the registry.
+voice:
+  en: {engine: tts_kokoro, voice: af_heart, speed: 1.0}
+  hi: {engine: tts_indic_parler, speaker: Divya, description: "Divya speaks in a bright, youthful, confident voice with clear, close audio."}
+  # Cloning a real person's voice requires their written consent:
+  # clone_of_real_person: true
+  # consent_record: legal/consent/<file>   (store the signed form outside git)
+
+# Character LoRA (trained on your own approved model sheets only).
+lora:
+  file: null                 # e.g. example_hero_v001.safetensors (lives on GridShare, not in git)
+  trigger: exh3ro
+  weight: 0.8
+  base_model: animagine_xl_4 # registry key; must be cleared
+  training_data: null        # e.g. "40 images generated from our approved model sheet v003"
+  training_data_cleared: false
+
+references:
+  model_sheet: refs/example_hero/model_sheet_v001.png
+  turnaround: []
+  expressions: []
+
+identity_threshold: 0.82     # CCIP similarity needed to pass identity QC
+approved_version: null

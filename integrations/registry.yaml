@@ -1,87 +1,607 @@
 # ============================================================
-# AI FILM STUDIO - INTEGRATION REGISTRY
+# AI FILM STUDIO - INTEGRATION & MODEL REGISTRY
 # ============================================================
 #
-# Catalogue of external capabilities the studio can call.
-# Each entry is connected through an adapter; the core studio
-# never imports an external repository directly.
+# Every external tool (integrations:) and every model weight
+# (models:) the studio may use, with its LICENSE STATE.
 #
-# Fields
-#   name            human-readable name
-#   type            capability category (matches the key)
-#   enabled         catalogue default; must ALSO be enabled in
-#                   studio/config.yaml to run on a machine
-#   execution_mode  local | external | hybrid
-#   repository      upstream GitHub repo, or null until chosen
-#   adapter         module path the orchestrator will load,
-#                   or null until the adapter is written
-#   heavy           true = needs significant CPU/GPU/RAM
+# The license gate (studio/legal/licenses.py) clears an entry
+# ONLY when:
+#   commercial_use is allowed   + verified: true + source set
+#   commercial_use is conditional + verified + conditions written
+#                                  + conditions_acknowledged: true
+# prohibited / unknown / unverified -> BLOCKED. No exceptions.
 #
-# Repositories are intentionally null. Choose and pin them
-# (with a commit or tag) when each adapter is implemented.
+# "verified: true" below means the license text was read at
+# `source` on `verified_on`. Licenses change between versions:
+# re-verify when you change `pin`. Entries marked verified: false
+# are recorded from knowledge, NOT yet checked; verify them
+# (python -m studio legal verify <key> ...) before use.
+#
+# Fields (integrations)
+#   name, type, enabled, execution_mode (local|external|hybrid),
+#   runs_on (laptop|gridshare|either), repository, pin, adapter,
+#   heavy, license{...}
+# Keep to simple YAML (nested mappings, scalars, [a, b] lists).
 # ============================================================
 
 integrations:
 
+  # ---------------------------------------------- generation
+  comfyui:
+    name: ComfyUI (node-based image and video generation)
+    type: generation_runner
+    enabled: true
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://github.com/Comfy-Org/ComfyUI
+    pin: null
+    adapter: integrations.comfyui.adapter
+    heavy: true
+    license:
+      code: GPL-3.0
+      weights: null
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://github.com/Comfy-Org/ComfyUI
+      notes: "GPL covers the software, not images it renders. Custom nodes each have their own license: add each one you install."
+
+  lora_trainer_kohya:
+    name: kohya-ss sd-scripts (character LoRA training)
+    type: training
+    enabled: false
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://github.com/kohya-ss/sd-scripts
+    pin: null
+    adapter: null
+    heavy: true
+    license:
+      code: Apache-2.0
+      weights: null
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://github.com/kohya-ss/sd-scripts/blob/main/LICENSE.md
+
+  # ------------------------------------------------------- 3D
+  blender:
+    name: Blender (layout, 3D sets and props, blocking renders)
+    type: 3d
+    enabled: true
+    execution_mode: local
+    runs_on: either
+    repository: https://projects.blender.org/blender/blender
+    pin: null
+    adapter: integrations.blender.adapter
+    heavy: false
+    license:
+      code: GPL-2.0-or-later
+      weights: null
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://www.blender.org/about/license/
+      notes: "Your renders and .blend content are yours. Downloaded assets (Poly Haven, Sketchfab, Poly Pizza) each carry their own license: record every one."
+
+  blender_mcp:
+    name: Blender MCP (Claude controls Blender interactively)
+    type: assistant_bridge
+    enabled: false
+    execution_mode: local
+    runs_on: laptop
+    repository: https://github.com/ahujasid/blender-mcp
+    pin: null
+    adapter: null
+    heavy: false
+    license:
+      code: MIT
+      weights: null
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://github.com/ahujasid/blender-mcp
+      notes: "Its Hyper3D Rodin / Hunyuan3D / Sketchfab features call third-party services with their own terms."
+
+  # ---------------------------------------------------- voice
+  tts_kokoro:
+    name: Kokoro-82M (English TTS, CPU friendly)
+    type: tts
+    enabled: true
+    execution_mode: local
+    runs_on: either
+    repository: https://huggingface.co/hexgrad/Kokoro-82M
+    pin: null
+    adapter: integrations.tts.adapter
+    heavy: false
+    license:
+      code: Apache-2.0
+      weights: Apache-2.0
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://huggingface.co/hexgrad/Kokoro-82M
+
+  tts_indic_parler:
+    name: AI4Bharat Indic Parler-TTS (Hindi + 20 Indian languages)
+    type: tts
+    enabled: true
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://huggingface.co/ai4bharat/indic-parler-tts
+    pin: null
+    adapter: integrations.tts.adapter
+    heavy: true
+    license:
+      code: Apache-2.0
+      weights: Apache-2.0
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://huggingface.co/ai4bharat/indic-parler-tts
+
+  tts_f5:
+    name: F5-TTS (voice cloning) - BLOCKED
+    type: tts
+    enabled: false
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://github.com/SWivid/F5-TTS
+    pin: null
+    adapter: null
+    heavy: true
+    license:
+      code: MIT
+      weights: CC-BY-NC
+      commercial_use: prohibited
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://github.com/SWivid/F5-TTS
+      notes: "Pretrained weights are CC-BY-NC (Emilia training data). Not usable on a monetised channel."
+
+  tts_xtts_v2:
+    name: Coqui XTTS-v2 - BLOCKED
+    type: tts
+    enabled: false
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://huggingface.co/coqui/XTTS-v2
+    pin: null
+    adapter: null
+    heavy: true
+    license:
+      code: MPL-2.0
+      weights: Coqui Public Model License
+      commercial_use: prohibited
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://huggingface.co/coqui/XTTS-v2
+      notes: "CPML is non-commercial; Coqui shut down so no commercial licence can be bought."
+
+  stt_faster_whisper:
+    name: faster-whisper (speech-to-text for dialogue QC and subtitles)
+    type: stt
+    enabled: true
+    execution_mode: local
+    runs_on: either
+    repository: https://github.com/SYSTRAN/faster-whisper
+    pin: null
+    adapter: integrations.stt.whisper
+    heavy: false
+    license:
+      code: MIT
+      weights: MIT
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://github.com/SYSTRAN/faster-whisper/blob/master/LICENSE
+
+  lipsync_rhubarb:
+    name: Rhubarb Lip Sync (mouth shapes from audio)
+    type: lipsync
+    enabled: true
+    execution_mode: local
+    runs_on: laptop
+    repository: https://github.com/DanielSWolf/rhubarb-lip-sync
+    pin: null
+    adapter: integrations.lipsync.rhubarb
+    heavy: false
+    license:
+      code: MIT
+      weights: null
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://github.com/DanielSWolf/rhubarb-lip-sync/blob/master/LICENSE.md
+
+  # ---------------------------------------------------- music
+  music_ace_step:
+    name: ACE-Step (music generation)
+    type: music
+    enabled: false
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://github.com/ace-step/ACE-Step
+    pin: null
+    adapter: integrations.music.adapter
+    heavy: true
+    license:
+      code: Apache-2.0
+      weights: unverified
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://github.com/ace-step/ACE-Step
+      notes: "Code is Apache-2.0 (checked 2026-10-04). Check the weights license of the exact version you install (v1.5 released 2026-01-28) before clearing."
+
+  music_musicgen:
+    name: Meta MusicGen - BLOCKED
+    type: music
+    enabled: false
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://github.com/facebookresearch/audiocraft
+    pin: null
+    adapter: null
+    heavy: true
+    license:
+      code: MIT
+      weights: CC-BY-NC-4.0
+      commercial_use: prohibited
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://github.com/facebookresearch/audiocraft/blob/main/LICENSE_weights
+
+  # ----------------------------------------- motion & editing
+  motion_remotion:
+    name: Remotion (titles, cards, lower thirds, motion graphics)
+    type: motion_graphics
+    enabled: true
+    execution_mode: local
+    runs_on: laptop
+    repository: https://github.com/remotion-dev/remotion
+    pin: null
+    adapter: integrations.motion_graphics.adapter
+    heavy: false
+    license:
+      code: Remotion License
+      weights: null
+      commercial_use: conditional
+      conditions: "Free for individuals and teams of up to 3 people; a paid Company License is required above 3 people."
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://www.remotion.dev/docs/license/faq
+
+  edit_ffmpeg:
+    name: FFmpeg (camera moves, assembly, mix, loudness, subtitles, packaging)
+    type: edit
+    enabled: true
+    execution_mode: local
+    runs_on: laptop
+    repository: https://ffmpeg.org
+    pin: null
+    adapter: integrations.edit.assemble
+    heavy: false
+    license:
+      code: LGPL-2.1-or-later (GPL builds exist)
+      weights: null
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://ffmpeg.org/legal.html
+
+  edit_opentimelineio:
+    name: OpenTimelineIO (export the edit to DaVinci Resolve for manual polish)
+    type: edit
+    enabled: false
+    execution_mode: local
+    runs_on: laptop
+    repository: https://github.com/AcademySoftwareFoundation/OpenTimelineIO
+    pin: null
+    adapter: null
+    heavy: false
+    license:
+      code: Apache-2.0
+      weights: null
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://github.com/AcademySoftwareFoundation/OpenTimelineIO/blob/main/LICENSE.txt
+
+  post_rife:
+    name: RIFE frame interpolation (smooth generated clips to 24 fps)
+    type: postprocess
+    enabled: false
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://github.com/hzwer/Practical-RIFE
+    pin: null
+    adapter: null
+    heavy: true
+    license:
+      code: MIT
+      weights: unverified
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://github.com/hzwer/Practical-RIFE
+      notes: "Use sparingly on anime: interpolating limited animation destroys the 'on twos' feel."
+
+  post_realesrgan:
+    name: Real-ESRGAN (anime upscaling to 1080p)
+    type: postprocess
+    enabled: false
+    execution_mode: hybrid
+    runs_on: gridshare
+    repository: https://github.com/xinntao/Real-ESRGAN
+    pin: null
+    adapter: null
+    heavy: true
+    license:
+      code: BSD-3-Clause
+      weights: unverified
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://github.com/xinntao/Real-ESRGAN/blob/master/LICENSE
+
+  # ---------------------------------------------------------- QC
+  identity_ccip:
+    name: imgutils CCIP (anime character identity check)
+    type: qc
+    enabled: true
+    execution_mode: local
+    runs_on: laptop
+    repository: https://github.com/deepghs/imgutils
+    pin: null
+    adapter: integrations.identity.ccip
+    heavy: false
+    license:
+      code: MIT
+      weights: unverified
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://github.com/deepghs/imgutils
+      notes: "Code MIT (checked 2026-10-04). QC-only: it judges frames but never appears in the video, so it does not enter provenance."
+
+  # -------------------------------------------------- compute
+  compute_gridshare:
+    name: GridShare India (rented GPUs over SSH / REST API)
+    type: compute
+    enabled: true
+    execution_mode: external
+    runs_on: gridshare
+    repository: https://gridshare.in
+    pin: null
+    adapter: studio.compute.gridshare
+    heavy: false
+    license:
+      code: Service terms
+      weights: null
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://gridshare.in
+      notes: "Read their terms of service for data handling and commercial use before uploading unreleased episodes."
+
+  # ------------------------------- general studio (kept for future projects)
   stock:
     name: Stock media
     type: stock
     enabled: false
     execution_mode: external
+    runs_on: laptop
     repository: null
+    pin: null
     adapter: null
     heavy: false
+    license:
+      code: null
+      weights: null
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: null
+      notes: "Every stock asset needs its own recorded license (third_party_license in its provenance)."
 
   maps:
     name: Maps and geographic data
     type: maps
     enabled: false
     execution_mode: hybrid
+    runs_on: laptop
     repository: null
+    pin: null
     adapter: null
     heavy: false
+    license:
+      code: null
+      weights: null
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: null
 
   vectors:
     name: Vector graphics
     type: vectors
     enabled: false
     execution_mode: local
+    runs_on: laptop
     repository: null
+    pin: null
     adapter: null
     heavy: false
+    license:
+      code: null
+      weights: null
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: null
 
-  tts:
-    name: Text to speech
-    type: tts
-    enabled: false
-    execution_mode: local
-    repository: null
-    adapter: null
-    heavy: true
+# ============================================================
+# MODELS (weights used through ComfyUI and other runners)
+# ============================================================
+models:
 
-  transcription:
-    name: Speech transcription
-    type: transcription
-    enabled: false
-    execution_mode: local
-    repository: null
-    adapter: null
-    heavy: true
+  animagine_xl_4:
+    name: Animagine XL 4.0 (SDXL anime checkpoint)
+    type: image_model
+    runner: comfyui
+    repository: https://huggingface.co/cagliostrolab/animagine-xl-4.0
+    file: animagine-xl-4.0.safetensors
+    license:
+      code: null
+      weights: CreativeML Open RAIL++-M
+      commercial_use: conditional
+      conditions: "Commercial use allowed; the RAIL use-based restrictions apply (no illegal, harmful, discriminatory or exploitative content). Restrictions must be passed on if the model is redistributed."
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://huggingface.co/cagliostrolab/animagine-xl-4.0
 
-  image_generation:
-    name: AI image generation
-    type: image_generation
-    enabled: false
-    execution_mode: external
-    repository: null
-    adapter: null
-    heavy: true
+  qwen_image_edit_2509:
+    name: Qwen-Image-Edit-2509 (multi-reference editing for consistency)
+    type: image_model
+    runner: comfyui
+    repository: https://huggingface.co/Qwen/Qwen-Image-Edit-2509
+    file: null
+    license:
+      code: null
+      weights: Apache-2.0
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://huggingface.co/Qwen/Qwen-Image-Edit-2509
 
-  video_generation:
-    name: AI video generation
-    type: video_generation
-    enabled: false
-    execution_mode: external
-    repository: null
-    adapter: null
-    heavy: true
+  wan2_2_ti2v_5b:
+    name: Wan2.2 TI2V-5B (text/image-to-video, 720p, fits a 24 GB GPU)
+    type: video_model
+    runner: comfyui
+    repository: https://github.com/Wan-Video/Wan2.2
+    file: null
+    license:
+      code: Apache-2.0
+      weights: Apache-2.0
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://github.com/Wan-Video/Wan2.2
+      notes: "README: model claims no rights over outputs; usage restrictions on illegal/harmful content apply."
+
+  wan2_2_i2v_a14b:
+    name: Wan2.2 I2V-A14B (higher quality image-to-video; 80 GB officially, fp8 + offload in ComfyUI on less)
+    type: video_model
+    runner: comfyui
+    repository: https://github.com/Wan-Video/Wan2.2
+    file: null
+    license:
+      code: Apache-2.0
+      weights: Apache-2.0
+      commercial_use: allowed
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://github.com/Wan-Video/Wan2.2
+
+  noobai_xl:
+    name: NoobAI-XL - BLOCKED
+    type: image_model
+    runner: comfyui
+    repository: https://huggingface.co/Laxhar/noobai-XL-Vpred-0.5
+    file: null
+    license:
+      code: null
+      weights: fair-ai-public-license-1.0-sd
+      commercial_use: prohibited
+      conditions: null
+      conditions_acknowledged: false
+      verified: true
+      verified_on: 2026-10-04
+      source: https://huggingface.co/Laxhar/noobai-XL-Vpred-0.5
+      notes: "License prohibits commercialisation of the model and of model-generated products."
+
+  illustrious_xl:
+    name: Illustrious-XL (and Illustrious-based merges) - BLOCKED until verified
+    type: image_model
+    runner: comfyui
+    repository: https://huggingface.co/OnomaAIResearch
+    file: null
+    license:
+      code: null
+      weights: varies by version
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: null
+      notes: "Popular anime base; several versions and most community merges carry non-commercial terms. Check the exact file."
+
+  flux1_dev:
+    name: FLUX.1 [dev] - BLOCKED until verified
+    type: image_model
+    runner: comfyui
+    repository: https://huggingface.co/black-forest-labs/FLUX.1-dev
+    file: null
+    license:
+      code: null
+      weights: FLUX.1 [dev] Non-Commercial License
+      commercial_use: unknown
+      conditions: null
+      conditions_acknowledged: false
+      verified: false
+      verified_on: null
+      source: https://huggingface.co/black-forest-labs/FLUX.1-dev
+      notes: "Weights are non-commercial; read the current text on outputs before any use."

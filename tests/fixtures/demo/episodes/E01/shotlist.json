@@ -1,0 +1,60 @@
+{
+  "series": "demo",
+  "episode": 1,
+  "version": "v001",
+  "fps": 24,
+  "scenes": [
+    {
+      "id": "SC01",
+      "location": "rooftop",
+      "time_of_day": "night",
+      "summary": "Aria reaches the lantern; Kael arrives.",
+      "shots": [
+        {
+          "id": "SC01_SH001",
+          "duration_s": 12.0,
+          "purpose": "Establish rooftop and lantern.",
+          "motion": "camera",
+          "camera": {"framing": "WS", "angle": "low", "move": "pan_right"},
+          "characters": [],
+          "visual_prompt": "observatory rooftop at night, single glowing lantern, wind, city lights far below",
+          "dialogue": []
+        },
+        {
+          "id": "SC01_SH002",
+          "duration_s": 20.0,
+          "purpose": "Aria's relief.",
+          "motion": "limited",
+          "camera": {"framing": "MCU", "move": "static"},
+          "characters": [{"id": "aria", "outfit": "default", "expression": "determined"}],
+          "visual_prompt": "ar1a, girl with short silver bob, amber eyes, navy coat, looking at lantern",
+          "dialogue": [
+            {"character": "aria", "emotion": "determined", "line": {"en": "It is still burning. Good.", "hi": "यह अभी भी जल रहा है। अच्छा।"}}
+          ]
+        },
+        {
+          "id": "SC01_SH003",
+          "duration_s": 5.0,
+          "purpose": "Kael lands behind her.",
+          "motion": "full",
+          "camera": {"framing": "MS", "move": "push_in"},
+          "characters": [{"id": "kael"}],
+          "visual_prompt": "young man in red long coat lands on rooftop, coat flaring, sparks",
+          "dialogue": [
+            {"character": "kael", "emotion": "cold", "line": {"en": "Not for long.", "hi": "ज़्यादा देर नहीं।"}}
+          ]
+        },
+        {
+          "id": "SC01_SH004",
+          "duration_s": 20.0,
+          "purpose": "Standoff.",
+          "motion": "hold",
+          "camera": {"framing": "WS", "move": "static"},
+          "characters": [{"id": "aria"}, {"id": "kael"}],
+          "visual_prompt": "two figures face each other on rooftop, lantern between them",
+          "dialogue": []
+        }
+      ]
+    }
+  ]
+}

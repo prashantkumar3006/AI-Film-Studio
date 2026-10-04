@@ -1,0 +1,15 @@
+# Copy to <id>.yaml. Files starting with "_" are ignored.
+id: example_place
+name: Example Place
+description: What it is, who uses it, what it feels like.
+time_variants: [day, dusk, night]
+architecture: materials, scale, shapes
+lighting: key light direction and colour by time of day
+sound: ambience bed (e.g. distant wind chimes, low hum of machines)
+palette:
+  base: "#2E3A4F"
+  light: "#F2B65A"
+props: []
+references:
+  establishing: refs/locations/example_place_v001.png
+blender_layout: null         # path to the .blend with cameras for this set

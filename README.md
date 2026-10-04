@@ -1,23 +1,68 @@
 # AI-Film-Studio
-AI-powered film and documentary production studio: directing, writing, cinematography, editing, VFX, sound, color, and production workflows.
 
-## Modular architecture
+A private, automated, license-safe studio for producing an original
+**anime series in English and Hindi** — and, because the studio is
+general, any future film or video project.
 
-The repository is being prepared as a modular, automated video-production studio:
+Claude writes, directs and manages; Blender (with Blender MCP) builds sets
+and layouts; ComfyUI on a rented GridShare GPU generates keyframes and
+motion; Kokoro and Indic Parler-TTS voice the characters; Rhubarb drives
+mouth shapes; Remotion makes titles; FFmpeg edits, mixes and packages.
+A built-in feedback system checks every asset, retries what it can fix
+and sends only real problems to you.
 
-- **`studio/`** — department knowledge (`<department>/SKILL.md`) plus execution modules:
-  `orchestrator/`, `asset_manager/`, `render/`, `audio/`, `video/`, `subtitles/`, `qc/`.
-  Settings live in `studio/config.yaml` (lightweight defaults: 1920×1080 @ 30 fps, local processing).
-- **`integrations/`** — external tools (stock, maps, vectors, TTS, transcription, image/video
-  generation) connected through adapters and catalogued in `integrations/registry.yaml`.
-  All heavy AI integrations are disabled by default.
-- **`projects/`** — generated project folders (git-ignored).
-- **`scripts/create_project.py`** — the existing engine; still owns project state and workflow execution.
-
-Try the orchestration skeleton (standard library only):
-
-```bash
-python studio/orchestrator/pipeline.py --workflow scripts/workflows/production_pipeline.json --slug my-first-film --plan-only
+```
+script → shot list → [gates: bible · IP scan · budget] → voices → timing
+→ Blender layout → keyframes → [QC + approval] → motion · lip sync · titles
+→ music → edit → mix → subtitles → [master QC] → [release gate] → package
+→ review & lessons (thresholds and costs recalibrate)
 ```
 
-See [`studio/README.md`](studio/README.md) and [`integrations/README.md`](integrations/README.md).
+## Quick start
+
+```bash
+python -m pip install -r requirements.txt     # + requirements-qc.txt for QC extras
+python -m studio doctor
+python -m unittest discover -s tests
+python -m studio pipeline plan
+```
+
+Then in Claude Code: *"studio status for <series> <episode>"*.
+
+| Command | What it does |
+|---|---|
+| `series new / check` | create a series from the template; validate its bible |
+| `episode new` | episode canon files + engine project |
+| `shots check` | shot list vs bible, runtime, motion policy |
+| `legal check / verify / acknowledge / scan / release-gate` | license gate, IP scan, final provenance gate |
+| `estimate` | GPU cost vs the ₹5,000 cap |
+| `voice`, `timing` | dialogue through the QC loop; fit shots to dialogue |
+| `compute start / stop / status / tunnel` | GridShare sessions and ComfyUI tunnel |
+| `qc run / queue / rate / report / calibrate` | the feedback system |
+| `budget report / log / calibrate` | spending and measured costs |
+| `pipeline plan / status` | the 23 stages and what to do next |
+
+## Layout
+
+```
+.claude/skills/     36 department skills (Claude loads them automatically)
+CLAUDE.md           studio operating system: rules, routing, gates
+series/             canon per series: bible, scripts, shot lists (_template/)
+studio/             Python: series, legal, budget, feedback, compute, CLI, orchestrator
+integrations/       adapters + registry.yaml (every tool/model with license state)
+scripts/            project engine (create_project.py), workflows, legacy adapters
+legal/              denylist; consent records stay outside git
+docs/               SETUP · PIPELINE · STACK · FEEDBACK · BUDGET · LEGAL · system/
+tests/              unittest suite (runs in CI on every push)
+projects/           engine projects with heavy media (git-ignored)
+```
+
+## Rules that keep the channel safe
+
+Nothing is generated with a tool or model that is not cleared for
+commercial use, every generated file carries a provenance record, and an
+episode cannot pass the release gate unless all of it checks out. See
+[docs/LEGAL.md](docs/LEGAL.md). Not legal advice.
+
+This repository is private. Keep it that way: it holds unreleased scripts
+and character designs.

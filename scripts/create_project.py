@@ -4046,6 +4046,102 @@ Automation Engine:
 
         return value
 
+    # Built-in {{TOKENS}} filled from project state, never from
+    # workflow variables or the environment.
+    BUILTIN_WORKFLOW_TOKENS = {
+        "PROJECT_ROOT",
+        "REPO_ROOT",
+        "PROJECT_ID",
+        "PROJECT_TITLE",
+        "PROJECT_SLUG",
+        "DATE",
+        "NOW",
+    }
+
+    def resolve_custom_tokens(
+        self,
+        value: str,
+    ) -> str:
+        """Fill {{NAME}} tokens that are not built-ins.
+
+        Lookup order: the workflow's ``variables`` block, then the
+        environment. A variable whose value is only a reference to
+        itself (``"SHOT_ID": "{{SHOT_ID}}"``) means "must come from
+        the environment". Unresolved tokens are left in place so
+        ``unresolved_tokens`` can report them before execution.
+        """
+
+        variables = getattr(
+            self,
+            "_workflow_variables",
+            {},
+        ) or {}
+
+        pattern = re.compile(
+            r"\{\{([A-Za-z_][A-Za-z0-9_]*)\}\}"
+        )
+
+        def lookup(match):
+            name = match.group(1)
+            if name in self.BUILTIN_WORKFLOW_TOKENS:
+                return match.group(0)
+            declared = variables.get(name)
+            if (
+                isinstance(declared, str)
+                and declared != match.group(0)
+            ):
+                return declared
+            return os.environ.get(
+                name,
+                match.group(0),
+            )
+
+        # Variables may reference other variables; resolve a few
+        # passes deep, stopping once nothing changes.
+        for _ in range(5):
+            updated = pattern.sub(
+                lookup,
+                value,
+            )
+            if updated == value:
+                break
+            value = updated
+
+        return value
+
+    def unresolved_tokens(
+        self,
+        value: Any,
+    ) -> List[str]:
+
+        found: List[str] = []
+
+        if isinstance(value, str):
+            found.extend(
+                re.findall(
+                    r"\{\{([A-Za-z_][A-Za-z0-9_]*)\}\}",
+                    value,
+                )
+            )
+            found.extend(
+                re.findall(
+                    r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}",
+                    value,
+                )
+            )
+        elif isinstance(value, list):
+            for item in value:
+                found.extend(
+                    self.unresolved_tokens(item)
+                )
+        elif isinstance(value, dict):
+            for item in value.values():
+                found.extend(
+                    self.unresolved_tokens(item)
+                )
+
+        return found
+
     def resolve_workflow_value(
         self,
         value: Any,
@@ -4061,6 +4157,10 @@ Automation Engine:
             value,
             str,
         ):
+
+            value = self.resolve_custom_tokens(
+                value
+            )
 
             replacements = {
                 "{{PROJECT_ROOT}}":
@@ -4474,6 +4574,15 @@ Automation Engine:
                     in args
                 ]
 
+                # "python" in a workflow means "the interpreter
+                # running the studio", which also works on systems
+                # where only python3 / py is on PATH.
+                if args and args[0] in {
+                    "python",
+                    "python3",
+                }:
+                    args[0] = sys.executable
+
             result = {
                 "type":
                     step_type,
@@ -4483,8 +4592,29 @@ Automation Engine:
                     "DRY_RUN",
             }
 
+            missing = sorted(
+                set(
+                    self.unresolved_tokens(
+                        args
+                    )
+                )
+            )
+
+            if missing:
+                result[
+                    "unresolved"
+                ] = missing
+
             if not execute:
                 return result
+
+            if missing:
+                raise RuntimeError(
+                    f"Step '{name}' has unresolved "
+                    f"placeholders: {', '.join(missing)}. "
+                    "Set them as environment variables or "
+                    "in the workflow's variables block."
+                )
 
             completed = subprocess.run(
                 args,
@@ -4517,9 +4647,20 @@ Automation Engine:
             )
 
             if completed.returncode != 0:
+                detail = (
+                    completed.stderr
+                    or completed.stdout
+                    or ""
+                ).strip()[-1500:]
                 raise RuntimeError(
-                    "Command failed: "
+                    f"Step '{name}' failed "
+                    f"(exit {completed.returncode}): "
                     + " ".join(args)
+                    + (
+                        f"\n{detail}"
+                        if detail
+                        else ""
+                    )
                 )
 
             return result
@@ -4805,31 +4946,74 @@ Automation Engine:
 
         results = []
 
-        for index, step in enumerate(
-            workflow["steps"],
-            start=1,
-        ):
+        variables = workflow.get(
+            "variables"
+        ) or {}
 
-            result = (
-                self.execute_step(
-                    root,
-                    state,
-                    step,
-                    execute,
-                    allow_shell,
+        self._workflow_variables = (
+            variables
+            if isinstance(variables, dict)
+            else {}
+        )
+
+        failure: Optional[BaseException] = None
+
+        try:
+
+            for index, step in enumerate(
+                workflow["steps"],
+                start=1,
+            ):
+
+                try:
+
+                    result = (
+                        self.execute_step(
+                            root,
+                            state,
+                            step,
+                            execute,
+                            allow_shell,
+                        )
+                    )
+
+                except Exception as error:
+
+                    failure = error
+
+                    result = {
+                        "type":
+                            step.get("type"),
+                        "status":
+                            "FAILED",
+                        "error":
+                            str(error)[-4000:],
+                    }
+
+                result["index"] = index
+
+                result["name"] = step.get(
+                    "name",
+                    f"step-{index}",
                 )
-            )
 
-            result["index"] = index
+                results.append(
+                    result
+                )
 
-            result["name"] = step.get(
-                "name",
-                f"step-{index}",
-            )
+                if failure is not None:
+                    break
 
-            results.append(
-                result
-            )
+        finally:
+
+            self._workflow_variables = {}
+
+        # Steps such as `task-add` run as subprocesses and write
+        # state themselves. Reload so this run record does not
+        # overwrite what they created.
+        state = self.load_state(
+            root
+        )
 
         report = {
             "run_id":
@@ -4877,8 +5061,18 @@ Automation Engine:
                 "ended":
                     report["ended"],
                 "status":
-                    "COMPLETE",
+                    (
+                        "FAILED"
+                        if failure is not None
+                        else "COMPLETE"
+                    ),
             }
+        )
+
+        report["status"] = (
+            "FAILED"
+            if failure is not None
+            else "COMPLETE"
         )
 
         self.save_state(
@@ -4915,6 +5109,12 @@ Automation Engine:
                     report["mode"],
             },
         )
+
+        if failure is not None:
+            raise RuntimeError(
+                f"Workflow stopped at a failed step "
+                f"(report: {run_id}). {failure}"
+            ) from failure
 
         return report
 

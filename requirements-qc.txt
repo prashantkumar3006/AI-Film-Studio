@@ -1,0 +1,4 @@
+# Optional QC extras (all CPU-friendly, run on the laptop).
+pillow>=10.0            # palette check
+faster-whisper>=1.0     # dialogue accuracy check + subtitle timing
+dghs-imgutils>=0.10     # CCIP anime character identity check (downloads ONNX weights on first use)
